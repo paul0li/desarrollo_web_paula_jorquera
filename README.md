@@ -49,6 +49,7 @@ Se implementó validación de formularios con:
 ├── styles.css
 ├── portada.html
 ├── listado.html
+├── estadisticas.html
 └── form.html
 ```
 
