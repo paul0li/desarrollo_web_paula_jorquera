@@ -43,6 +43,7 @@ Se implementó validación de formularios con:
 ├── components/
 │   └── visor.html
 ├── js/
+│   ├── select.js
 │   ├── visor.js
 │   └── validation.js
 ├── img/
