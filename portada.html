@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Portada - Actividades</title>
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <div class="main-container">
+    <h1>Bienvenido a la Plataforma de Actividades</h1>
+    <p>Comparte y descubre actividades recreativas en tu comuna.</p>
+
+    <nav>
+      <ul>
+        <li><a href="form.html">Agregar actividad</a></li>
+        <li><a href="listado.html">Ver listado de actividades</a></li>
+        <li><a href="estadisticas.html">Ver estadísticas</a></li>
+      </ul>
+    </nav>
+
+    <h2>Últimas actividades agregadas</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Inicio</th>
+          <th>Término</th>
+          <th>Comuna</th>
+          <th>Sector</th>
+          <th>Tema</th>
+          <th>Foto</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>2025-03-28 12:00</td>
+          <td>2025-03-28 14:00</td>
+          <td>Providencia</td>
+          <td>Teatro de la Universidad Católica</td>
+          <td>Gatitos y el cine silente</td>
+          <td><img src="img/silente.jpg" alt="Gatitos" width="80" class="foto-mini" onclick="mostrarFoto(this.src)"></td>
+        </tr>
+        <tr>
+          <td>2025-03-29 19:00</td>
+          <td>2025-03-29 20:00</td>
+          <td>Las Condes</td>
+          <td>Cine Arte Las Condes</td>
+          <td>Cine de Animación</td>
+          <td><img src="img/animacion.jpg" alt="Gatitos" width="80" class="foto-mini" onclick="mostrarFoto(this.src)"></td>
+        </tr>
+        <tr>
+          <td>2025-03-30 18:00</td>
+          <td>2025-03-30 19:00</td>
+          <td>La Reina</td>
+          <td>Centro Cultural La Reina</td>
+          <td>Gatitos y el cine independiente</td>
+          <td><img src="img/independiente.jpg" alt="Gatitos" width="80" class="foto-mini" onclick="mostrarFoto(this.src)"></td>
+        </tr>
+        <tr>
+          <td>2025-03-31 15:00</td>
+          <td>2025-03-31 16:00</td>
+          <td>Lo Barnechea</td>
+          <td>Cine Arte Lo Barnechea</td>
+          <td>Gatitos y el cine de terror</td>
+          <td><img src="img/terror.jpg" alt="Gatitos" width="80" class="foto-mini" onclick="mostrarFoto(this.src)"></td>
+        </tr>
+        <tr>
+          <td>2025-04-01 18:00</td>
+          <td>2025-04-01 19:00</td>
+          <td>Viña del Mar</td>
+          <td>Cine Arte Viña del Mar</td>
+          <td>Gatitos y el cine de anime</td>
+          <td><img src="img/anime.jpg" alt="Gatitos" width="80" class="foto-mini" onclick="mostrarFoto(this.src)"></td>
+        </tr>
+     </tbody>
+    </table>
+  </div>
+
+  <!-- Visor de imágenes -->
+  <div id="visor" class="foto-visor">
+    <div class="visor-contenido">
+      <button class="cerrar-visor" onclick="document.getElementById('visor').style.display='none'">
+        <span>&times;</span>
+      </button>
+      <div class="imagen-container">
+        <img id="imgGrande" src="" alt="Foto de la actividad" />
+      </div>
+    </div>
+  </div>
+
+  <script src="js/visor.js"></script>
+</body>
+</html>

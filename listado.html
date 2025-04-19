@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Listado de Actividades</title>
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <div class="main-container">
+    <h1>Listado de Actividades</h1>
+    <table>
+      <thead>
+        <tr>
+          <th>Inicio</th>
+          <th>Término</th>
+          <th>Comuna</th>
+          <th>Sector</th>
+          <th>Tema</th>
+          <th>Organizador</th>
+          <th>Total fotos</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>2025-04-20 15:00</td>
+          <td>2025-04-20 17:30</td>
+          <td>Providencia</td>
+          <td>Cineteca Felina</td>
+          <td>Crítica de Cine: Garfield</td>
+          <td>Sr. Bigotes</td>
+          <td>8</td>
+        </tr>
+        <tr>
+          <td>2025-04-22 19:00</td>
+          <td>2025-04-22 21:00</td>
+          <td>Las Condes</td>
+          <td>Teatro Gatuno</td>
+          <td>Masterclass: Dirección de Cine</td>
+          <td>Dra. Michi Spielberg</td>
+          <td>12</td>
+        </tr>
+        <tr>
+          <td>2025-04-25 14:00</td>
+          <td>2025-04-25 16:00</td>
+          <td>Ñuñoa</td>
+          <td>Café Cinema Felino</td>
+          <td>Taller de Guión</td>
+          <td>Don Gatopardo Coppola</td>
+          <td>6</td>
+        </tr>
+        <tr>
+          <td>2025-04-28 17:00</td>
+          <td>2025-04-28 19:30</td>
+          <td>Santiago</td>
+          <td>Club de Cine Minino</td>
+          <td>Historia del Cine Felino</td>
+          <td>Profesora Luna Hitchcock</td>
+          <td>15</td>
+        </tr>
+        <tr>
+          <td>2025-04-01 18:00</td>
+          <td>2025-04-01 19:00</td>
+          <td>Viña del Mar</td>
+          <td>Cine Arte Viña del Mar</td>
+          <td>Gatitos y el cine de anime</td>
+          <td>Neko Sensei</td>
+          <td>5</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <br />
+    <a href="portada.html">Volver a la portada</a>
+  </div>
+
+  <div id="visor" class="foto-visor">
+    <div class="visor-contenido">
+      <button class="cerrar-visor" onclick="document.getElementById('visor').style.display='none'">
+        <span>&times;</span>
+      </button>
+      <div class="imagen-container">
+        <img id="imgGrande" src="" alt="Foto de la actividad" />
+      </div>
+      <div class="controles">
+        <button id="prevFoto" class="nav-btn" title="Foto anterior">&lt;</button>
+        <span id="fotoIndicador">1 de 3</span>
+        <button id="nextFoto" class="nav-btn" title="Siguiente foto">&gt;</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/visor.js"></script>
+</body>
+</html>

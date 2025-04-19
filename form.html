@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Informar Actividad</title>
+  <link rel="stylesheet" type="text/css" href="./styles.css">
+
+</head>
+<body>
+    <div class="main-container">
+        <div class="nav-buttons">
+            <a href="portada.html" class="back-button">Volver a la portada</a>
+        </div>
+
+        <div id="val-box" hidden>
+            <h2 id="val-msg"></h2>
+            <ul id="val-list"></ul>
+        </div>
+
+        <form id="actividadForm" method="post" enctype="multipart/form-data">
+            <h1>Informar Nueva Actividad</h1>
+
+            <fieldset>
+            <legend>¿Dónde?</legend>
+            <label for="region">Región:</label>
+            <select id="region" name="region" required>
+                <option value="">Seleccione una región</option>
+            </select>
+
+            <br/>
+
+            <label for="comuna">Comuna:</label>
+            <select id="comuna" name="comuna" required>
+                <option value="">Seleccione una comuna</option>
+            </select>
+
+            <br/>
+
+            <label for="sector">Sector:</label>
+            <input type="text" id="sector" name="sector" maxlength="100" />
+            </fieldset>
+
+            <fieldset>
+            <legend>¿Quién organiza?</legend>
+            <label for="nombre">Nombre:</label>
+            <input type="text" id="nombre" name="nombre" maxlength="200" required />
+
+            <br/>
+
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" maxlength="100" required />
+
+            <br/>
+
+            <label for="celular">Número de celular:</label>
+            <input type="tel" id="celular" name="celular" pattern="\+[\d]{3}\s[\d]{8}" placeholder="+569 12345678"/>
+
+            <br/>
+
+            <label for="contactar">Contactar por:</label>
+            <select id="contactar" name="contactar">
+                <option value="">Seleccione una opción</option>
+                <option value="whatsapp">WhatsApp</option>
+                <option value="telegram">Telegram</option>
+                <option value="x">X</option>
+                <option value="instagram">Instagram</option>
+                <option value="tiktok">TikTok</option>
+                <option value="otra">Otra</option>
+            </select><br>
+
+            <div id="contactoExtraContainer" style="display: none; margin-top: 10px;">
+                <label for="contactoExtra">Username o URL:</label>
+                <input type="text" id="contactoExtra" name="contactoExtra" minlength="4" maxlength="50" />
+            </div>
+            </fieldset>
+
+            <!-- Sección: ¿Cuándo y de qué trata? -->
+            <fieldset>
+            <legend>¿Cuándo y de qué trata?</legend>
+
+            <label for="inicio">Día y hora de inicio:</label>
+            <input type="datetime-local" id="inicio" name="inicio" required />
+
+            <br/>
+
+            <label for="termino">Día y hora de término:</label>
+            <input type="datetime-local" id="termino" name="termino" />
+
+            <br/>
+
+            <label for="descripcion">Descripción:</label><br/>
+            <textarea id="descripcion" name="descripcion" cols="50" rows="10"></textarea>
+
+            <br/>
+
+            <label for="tema">Tema:</label>
+            <select id="tema" name="tema" required>
+                <option value="">Seleccione un tema</option>
+                <option value="musica">Música</option>
+                <option value="deporte">Deporte</option>
+                <option value="ciencias">Ciencias</option>
+                <option value="religion">Religión</option>
+                <option value="politica">Política</option>
+                <option value="tecnologia">Tecnología</option>
+                <option value="juegos">Juegos</option>
+                <option value="baile">Baile</option>
+                <option value="comida">Comida</option>
+                <option value="otro">Otro</option>
+            </select>
+
+            <div id="temaOtroContainer" style="display:none;">
+                <label for="temaOtro">Describe el tema:</label>
+                <input type="text" id="temaOtro" name="temaOtro" minlength="3" maxlength="15"/>
+            </div>
+
+            <br/>
+
+            <label for="foto1">Foto:</label>
+            <input type="file" name="foto[]" accept="image/*" required />
+            <div id="fotosContainer"></div>
+            <button type="button" id="agregarFoto">Agregar otra foto</button>
+            </fieldset>
+
+            <br/>
+             
+            <button type="submit" id="submit-btn">Agregar esta actividad</button>
+        </form>
+
+
+        <div id="confirmacion" hidden>
+            <h2>¿Está seguro que desea agregar esta actividad?</h2>
+            <button id="confirmar-si">Sí, estoy seguro</button>
+            <button id="confirmar-no">No, quiero volver al formulario</button>
+          </div>
+          
+          <div id="agradecimiento" hidden>
+            <h2>Hemos recibido su información, muchas gracias y suerte en su actividad</h2>
+            <button onclick="location.href='portada.html'">Volver a la portada</button>
+          </div>
+          
+    <script src="./js/select.js"></script>
+    <script src="./js/validation.js"></script>
+    <script src="js/visor.js" type="module"></script>
+
+</body>
+</html>
+
+
