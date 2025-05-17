@@ -1,4 +1,4 @@
-# Plataforma de Actividades - Desarrollo Web
+# Plataforma de Actividades - Desarrollo Web TAREA 2
 
 Este proyecto es una plataforma web para gestionar y visualizar actividades relacionadas con gatos y cine, desarrollada para el curso de Desarrollo Web en la Universidad de Chile.
 
