@@ -60,9 +60,9 @@ const validateForm = () => {
   let email = myForm["email"].value;
   let phoneNumber = myForm["celular"].value;
   let name = myForm["nombre"].value;
-  let files = myForm["files"].files;
-  let region = myForm["select-region"].value;
-  let comuna = myForm["select-comuna"].value;
+  let files = myForm["foto[]"].files;
+  let region = myForm["region"].value;
+  let comuna = myForm["comuna"].value;
 
   // variables auxiliares de validación y función.
   let invalidInputs = [];
@@ -156,14 +156,62 @@ const validateForm = () => {
 let submitBtn = document.getElementById("submit-btn");
 submitBtn.addEventListener("click", (e) => {
   e.preventDefault(); // para evitar submit real
-  // Mostrar confirmación
-  document.getElementById("actividadForm").style.display = "none";
-  document.getElementById("confirmacion").hidden = false;
+  
+  // Validar el formulario antes de mostrar la confirmación
+  let myForm = document.forms["actividadForm"];
+  let isValid = true;
+  let errorMessages = [];
+  
+  // Validaciones básicas - acumular mensajes de error
+  if (!myForm["comuna"].value) {
+    isValid = false;
+    errorMessages.push("Debe seleccionar una comuna");
+  }
+  if (!myForm["nombre"].value) {
+    isValid = false;
+    errorMessages.push("Debe ingresar un nombre");
+  }
+  if (!myForm["email"].value) {
+    isValid = false;
+    errorMessages.push("Debe ingresar un email");
+  }
+  if (!myForm["inicio"].value) {
+    isValid = false;
+    errorMessages.push("Debe ingresar una fecha y hora de inicio");
+  }
+  if (!myForm["tema"].value) {
+    isValid = false;
+    errorMessages.push("Debe seleccionar un tema");
+  }
+  
+  // Validar que la fecha de término sea posterior a la fecha de inicio
+  const fechaInicio = new Date(myForm["inicio"].value);
+  const fechaTermino = new Date(myForm["termino"].value);
+  
+  if (myForm["termino"].value && fechaTermino <= fechaInicio) {
+    isValid = false;
+    errorMessages.push("La fecha y hora de término debe ser posterior a la fecha y hora de inicio");
+  }
+  
+  // Mostrar todos los errores en un solo alert si hay alguno
+  if (!isValid && errorMessages.length > 0) {
+    alert("Por favor corrija los siguientes errores:\n- " + errorMessages.join("\n- "));
+    return; // Salir de la función sin mostrar la confirmación
+  }
+  
+  // Si el formulario es válido, mostrar confirmación
+  if (isValid) {
+    document.getElementById("actividadForm").style.display = "none";
+    document.getElementById("confirmacion").hidden = false;
+  }
 });
 
 
 document.getElementById("confirmar-si").addEventListener("click", () => {
   document.getElementById("confirmacion").hidden = true;
+  // Submit the form to the server
+  document.getElementById("actividadForm").submit();
+  // Show thank you message
   document.getElementById("agradecimiento").hidden = false;
 });
 

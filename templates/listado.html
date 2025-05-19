@@ -1,13 +1,16 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-  <meta charset="UTF-8" />
-  <title>Listado de Actividades</title>
-  <link rel="stylesheet" href="./styles.css" />
-</head>
-<body>
-  <div class="main-container">
-    <h1>Listado de Actividades</h1>
+{% extends "base.html" %}
+
+{% block title %}Listado de Actividades de Gatitos{% endblock %}
+
+{% block header %}{% endblock %}
+
+{% block content %}
+  <div class="nav-buttons">
+    <a href="{{ url_for('index') }}" class="back-button">Volver a la portada</a>
+  </div>
+  
+  <h1>Listado de Actividades</h1>
+    <div class="table-container">
     <table>
       <thead>
         <tr>
@@ -21,74 +24,81 @@
         </tr>
       </thead>
       <tbody>
-        <tr>
-          <td>2025-04-20 15:00</td>
-          <td>2025-04-20 17:30</td>
-          <td>Providencia</td>
-          <td>Cineteca Felina</td>
-          <td>Crítica de Cine: Garfield</td>
-          <td>Sr. Bigotes</td>
-          <td>8</td>
+        {% for actividad, comuna, region, tema, fotos in actividades %}
+        <tr class="actividad-row" data-id="{{ actividad.id }}" style="cursor: pointer;">
+          <td>{{ actividad.dia_hora_inicio.strftime('%d-%m-%Y %H:%M') }}</td>
+          <td>{{ actividad.dia_hora_termino.strftime('%d-%m-%Y %H:%M') if actividad.dia_hora_termino else '-' }}</td>
+          <td>{{ comuna.nombre }}</td>
+          <td>{{ actividad.sector }}</td>
+          <td>
+            {% set temas_actividad = get_temas_by_actividad(actividad.id) %}
+            {% for tema_item in temas_actividad %}
+              <div class="tema-item">
+                {{ tema_item.tema }}{% if tema_item.glosa_otro %}: {{ tema_item.glosa_otro }}{% endif %}
+              </div>
+            {% endfor %}
+          </td>
+          <td>{{ actividad.nombre }}</td>
+          <td>
+            {% if fotos %}
+              {% set fotos_urls = [] %}
+              {% for foto in fotos %}
+                {% set foto_url = url_for('static', filename='uploads/' + foto.ruta_archivo) %}
+                {% set _ = fotos_urls.append(foto_url) %}
+              {% endfor %}
+              {{ fotos|count }}
+            {% else %}
+              0
+            {% endif %}
+          </td>
         </tr>
+        {% else %}
         <tr>
-          <td>2025-04-22 19:00</td>
-          <td>2025-04-22 21:00</td>
-          <td>Las Condes</td>
-          <td>Teatro Gatuno</td>
-          <td>Masterclass: Dirección de Cine</td>
-          <td>Dra. Michi Spielberg</td>
-          <td>12</td>
+          <td colspan="7">No hay actividades registradas</td>
         </tr>
-        <tr>
-          <td>2025-04-25 14:00</td>
-          <td>2025-04-25 16:00</td>
-          <td>Ñuñoa</td>
-          <td>Café Cinema Felino</td>
-          <td>Taller de Guión</td>
-          <td>Don Gatopardo Coppola</td>
-          <td>6</td>
-        </tr>
-        <tr>
-          <td>2025-04-28 17:00</td>
-          <td>2025-04-28 19:30</td>
-          <td>Santiago</td>
-          <td>Club de Cine Minino</td>
-          <td>Historia del Cine Felino</td>
-          <td>Profesora Luna Hitchcock</td>
-          <td>15</td>
-        </tr>
-        <tr>
-          <td>2025-04-01 18:00</td>
-          <td>2025-04-01 19:00</td>
-          <td>Viña del Mar</td>
-          <td>Cine Arte Viña del Mar</td>
-          <td>Gatitos y el cine de anime</td>
-          <td>Neko Sensei</td>
-          <td>5</td>
-        </tr>
+        {% endfor %}
       </tbody>
     </table>
+    </div>
 
-    <br />
-    <a href="portada.html">Volver a la portada</a>
-  </div>
-
-  <div id="visor" class="foto-visor">
-    <div class="visor-contenido">
-      <button class="cerrar-visor" onclick="document.getElementById('visor').style.display='none'">
-        <span>&times;</span>
-      </button>
-      <div class="imagen-container">
-        <img id="imgGrande" src="" alt="Foto de la actividad" />
-      </div>
-      <div class="controles">
-        <button id="prevFoto" class="nav-btn" title="Foto anterior">&lt;</button>
-        <span id="fotoIndicador">1 de 3</span>
-        <button id="nextFoto" class="nav-btn" title="Siguiente foto">&gt;</button>
+    <!-- Controles de paginación -->
+    {% if total_paginas > 1 %}
+    <div class="pagination">
+      <div class="pagination-controls">
+        {% if pagina_actual > 1 %}
+        <a href="{{ url_for('listado', pagina=pagina_actual-1) }}" class="pagination-button">&laquo; Anterior</a>
+        {% endif %}
+        
+        {% for num in range(1, total_paginas + 1) %}
+          {% if num == pagina_actual %}
+          <span class="pagination-current">{{ num }}</span>
+          {% else %}
+          <a href="{{ url_for('listado', pagina=num) }}" class="pagination-link">{{ num }}</a>
+          {% endif %}
+        {% endfor %}
+        
+        {% if pagina_actual < total_paginas %}
+        <a href="{{ url_for('listado', pagina=pagina_actual+1) }}" class="pagination-button">Siguiente &raquo;</a>
+        {% endif %}
       </div>
     </div>
-  </div>
+    {% endif %}
 
-  <script src="js/visor.js"></script>
-</body>
-</html>
+    <br />
+    <a href="{{ url_for('index') }}">Volver a la portada</a>
+
+{% endblock %}
+
+{% block scripts %}
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const actividadRows = document.querySelectorAll('.actividad-row');
+      actividadRows.forEach(row => {
+        row.addEventListener('click', function() {
+          const actividadId = this.getAttribute('data-id');
+          window.location.href = "{{ url_for('ver_actividad', id=0) }}".replace('0', actividadId);
+        });
+      });
+    });
+  </script>
+{% endblock %}

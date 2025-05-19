@@ -1,0 +1,301 @@
+/* components.css - Componentes reutilizables (botones, tarjetas, etc.) */
+
+/* Opciones de contacto y temas */
+#contactarOptions,
+#temasOptions {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+    margin-bottom: 15px;
+}
+
+.contact-option,
+.tema-option {
+    display: flex;
+    align-items: center;
+    padding: 8px 12px;
+    background-color: #f5e6d3;
+    border-radius: 4px;
+    border-left: 2px solid #b08968;
+    justify-content: space-between;
+}
+
+.contact-option label,
+.tema-option label {
+    margin-bottom: 0;
+    margin-left: 5px;
+    flex: 1;
+}
+
+.contact-checkbox,
+.tema-checkbox {
+    margin-right: 5px;
+}
+
+.contacto-extra-field,
+.tema-otro-field {
+    margin-left: auto;
+    width: 60%;
+    display: inline-block;
+}
+
+.contacto-extra-field input,
+.tema-otro-field input {
+    width: 100%;
+    margin-bottom: 0;
+    padding: 8px;
+}
+
+/* Navegación */
+nav ul {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5em;
+    margin: 30px 0;
+    justify-content: center;
+}
+
+nav ul li a {
+    text-decoration: none;
+    color: #8b6b4a;
+    font-family: 'Amatic SC', cursive;
+    font-size: 1.8em;
+    transition: all 0.3s ease;
+    display: inline-block;
+}
+
+nav ul li a:hover {
+    color: #6b4423;
+    transform: translateY(-2px);
+}
+
+nav ul li a.active {
+    color: #6b4423;
+    font-weight: bold;
+    border-bottom: 2px solid #8b6b4a;
+}
+
+/* Botones */
+button,
+.back-button {
+    padding: 12px 24px;
+    background-color: #b08968;
+    color: #fdfbf7;
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+    font-size: 18px;
+    font-family: 'Amatic SC', cursive;
+    letter-spacing: 1px;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-block;
+    text-align: center;
+}
+
+button:hover,
+.back-button:hover {
+    background-color: #8b6b4a;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(139, 107, 74, 0.2);
+}
+
+/* Contenedor de input de fotos */
+.photo-input-container {
+    display: flex;
+    align-items: center;
+    margin: 10px 0;
+}
+
+.photo-input {
+    flex: 1;
+}
+
+/* Botón para eliminar fotos */
+.delete-photo-btn {
+    background-color: #b08968;
+    color: #fdfbf7;
+    border: none;
+    border-radius: 50%;
+    width: 25px;
+    height: 25px;
+    font-size: 18px;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    top: 0;
+}
+
+.delete-photo-btn:hover {
+    background-color: #dc3545;
+    transform: scale(1.1);
+}
+
+/* Contenedor de fotos */
+.foto-container {
+    position: relative;
+    display: inline-block;
+}
+
+.foto-mini {
+    cursor: pointer;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border-radius: 8px;
+    border: 2px solid #ddbea9;
+}
+
+.foto-mini:hover {
+    transform: scale(1.1);
+    box-shadow: 0 4px 8px rgba(139, 107, 74, 0.3);
+}
+
+/* Círculo con número de fotos */
+.foto-count {
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    background-color: #b08968;
+    color: #fdfbf7;
+    border-radius: 50%;
+    width: 25px;
+    height: 25px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 14px;
+    font-weight: bold;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    border: 2px solid #fdfbf7;
+}
+
+/* Tablas */
+/* Contenedor para la tabla con scroll horizontal si es necesario */
+.table-container {
+    width: 100%;
+    overflow-x: auto;
+    margin: 20px 0;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(92, 64, 51, 0.1);
+}
+
+table {
+    width: 100%;
+    min-width: 700px; /* Ancho mínimo para asegurar legibilidad */
+    border-collapse: separate;
+    border-spacing: 0;
+    background-color: #fdfbf7;
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+table th,
+table td {
+    border: 1px solid #ddbea9;
+    padding: 8px 10px;
+    text-align: left;
+    white-space: normal; /* Permitir que el texto se ajuste */
+}
+
+table th {
+    background-color: #b08968;
+    color: #fdfbf7;
+    font-family: 'Amatic SC', cursive;
+    font-size: 1.4em;
+    font-weight: normal;
+    letter-spacing: 1px;
+    border-bottom: 2px solid #8b6b4a;
+}
+
+table tr:nth-child(even) {
+    background-color: #f5e6d3;
+}
+
+table tr:hover {
+    background-color: #f5e6d3;
+}
+
+/* Botón para ver fotos en tabla */
+.ver-fotos-btn {
+    padding: 5px 10px;
+    background-color: #b08968;
+    color: #fdfbf7;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-family: 'Crimson Text', serif;
+    font-size: 14px;
+    transition: all 0.3s ease;
+}
+
+.ver-fotos-btn:hover {
+    background-color: #8b6b4a;
+    transform: translateY(-2px);
+}
+
+/* Etiquetas de tema */
+.tema-item {
+    background-color: #f5e6d3;
+    padding: 4px 8px;
+    border-radius: 4px;
+    margin-bottom: 4px;
+    display: inline-block;
+    margin-right: 4px;
+    font-size: 0.9em;
+    border-left: 3px solid #b08968;
+}
+
+/* Mensajes Flash */
+.flash-messages {
+    margin: 20px 0;
+    width: 100%;
+}
+
+.flash-message {
+    padding: 15px 20px;
+    margin-bottom: 15px;
+    border-radius: 8px;
+    position: relative;
+    animation: fadeIn 0.5s ease-in-out;
+}
+
+.flash-message.success {
+    background-color: #d4edda;
+    color: #155724;
+    border-left: 5px solid #28a745;
+}
+
+.flash-message.error {
+    background-color: #f8d7da;
+    color: #721c24;
+    border-left: 5px solid #dc3545;
+}
+
+.flash-message.info {
+    background-color: #d1ecf1;
+    color: #0c5460;
+    border-left: 5px solid #17a2b8;
+}
+
+.close-flash {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: none;
+    border: none;
+    font-size: 1.2em;
+    cursor: pointer;
+    color: inherit;
+    opacity: 0.7;
+    transition: opacity 0.3s ease;
+}
+
+.close-flash:hover {
+    opacity: 1;
+}

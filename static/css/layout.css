@@ -1,0 +1,339 @@
+/* layout.css - Estructura y layout general */
+
+/* Estructura de páginas */
+/* Contenedor principal más ancho para listado */
+.main-container.listado-container {
+    max-width: 1000px;
+    width: 95%;
+}
+.nav-buttons {
+    display: flex;
+    justify-content: flex-start;
+    margin-bottom: 20px;
+}
+
+/* Controles de paginación */
+.pagination {
+    display: flex;
+    justify-content: center;
+    margin: 30px 0 20px;
+}
+
+.pagination-controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+    justify-content: center;
+}
+
+.pagination-button,
+.pagination-link {
+    padding: 8px 15px;
+    background-color: #f5e6d3;
+    color: #5c4033;
+    border: 1px solid #ddbea9;
+    border-radius: 5px;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    font-family: 'Crimson Text', serif;
+}
+
+.pagination-button:hover,
+.pagination-link:hover {
+    background-color: #ddbea9;
+    color: #5c4033;
+}
+
+.pagination-current {
+    padding: 8px 15px;
+    background-color: #b08968;
+    color: #fdfbf7;
+    border-radius: 5px;
+    font-weight: bold;
+}
+
+/* Estilos para la página de detalles de actividad */
+.actividad-detalle {
+    margin-top: 20px;
+}
+
+.info-section {
+    width: 100%;
+    padding: 20px;
+    border-bottom: 1px solid #ddbea9;
+}
+
+.info-section:last-child {
+    border-bottom: none;
+}
+
+.info-section h2 {
+    font-size: 2.2em;
+    margin-bottom: 15px;
+    color: #6b4423;
+    font-family: 'Amatic SC', cursive;
+    text-align: left;
+}
+
+.info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 15px;
+}
+
+.info-item {
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+    background-color: #f5e6d3;
+    border-radius: 8px;
+    border-left: 4px solid #b08968;
+}
+
+.info-label {
+    font-weight: bold;
+    color: #5c4033;
+    margin-bottom: 5px;
+}
+
+.info-value {
+    color: #6b4423;
+}
+
+.descripcion {
+    background-color: #f5e6d3;
+    padding: 15px;
+    border-radius: 8px;
+    white-space: pre-line;
+    line-height: 1.6;
+}
+
+.temas-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.contactos-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.contacto-item {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    background-color: #f5e6d3;
+    border-radius: 8px;
+    border-left: 4px solid #b08968;
+}
+
+.contacto-tipo {
+    font-weight: bold;
+    margin-right: 10px;
+    color: #5c4033;
+}
+
+.contacto-valor {
+    color: #6b4423;
+}
+
+.galeria-fotos {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 15px;
+    margin-top: 15px;
+}
+
+.foto-thumbnail {
+    border: 2px solid #ddbea9;
+    border-radius: 8px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.foto-thumbnail:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 12px rgba(92, 64, 51, 0.2);
+}
+
+.thumbnail-img {
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+    display: block;
+}
+
+/* Estilos para la portada */
+.actividad-card {
+    margin-bottom: 30px;
+    padding: 15px;
+    background-color: rgba(255, 255, 255, 0.7);
+    border-radius: 10px;
+    box-shadow: 0 3px 10px rgba(139, 107, 74, 0.15);
+    border: 1px solid #ddbea9;
+    transition: all 0.3s ease;
+}
+
+.actividad-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(139, 107, 74, 0.25);
+}
+
+.actividad-card h2 {
+    color: #6b4423;
+    margin-top: 0;
+    margin-bottom: 10px;
+    font-size: 2.2em;
+}
+
+.actividad-info {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-bottom: 15px;
+}
+
+.actividad-detalles {
+    flex: 1;
+    min-width: 250px;
+}
+
+.actividad-fotos {
+    flex: 1;
+    min-width: 250px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Visor de imágenes */
+.foto-visor {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.9);
+    z-index: 1000;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.visor-contenido {
+    position: relative;
+    max-width: 90%;
+    max-height: 90%;
+    margin: auto;
+}
+
+.imagen-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 20px 0;
+}
+
+.imagen-container img {
+    max-width: 100%;
+    max-height: 70vh;
+    object-fit: contain;
+    border: 3px solid #ddbea9;
+    border-radius: 8px;
+}
+
+.cerrar-visor {
+    position: absolute;
+    top: -40px;
+    right: -40px;
+    background: none;
+    border: none;
+    color: #fdfbf7;
+    font-size: 2em;
+    cursor: pointer;
+    padding: 10px;
+    transition: transform 0.3s ease;
+}
+
+.cerrar-visor:hover {
+    transform: scale(1.2);
+}
+
+.controles {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    margin-top: 20px;
+}
+
+.nav-btn {
+    background-color: #b08968;
+    color: #fdfbf7;
+    border: none;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    font-size: 1.5em;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.nav-btn:hover:not(:disabled) {
+    background-color: #8b6b4a;
+    transform: scale(1.1);
+}
+
+.nav-btn:disabled {
+    background-color: #ddbea9;
+    cursor: not-allowed;
+    opacity: 0.5;
+}
+
+#fotoIndicador {
+    color: #fdfbf7;
+    font-family: 'Crimson Text', serif;
+    font-size: 1.2em;
+    min-width: 80px;
+    text-align: center;
+}
+
+/* Estilos responsivos para móviles */
+@media (max-width: 600px) {
+    .info-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .galeria-fotos {
+        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    }
+    
+    .thumbnail-img {
+        height: 120px;
+    }
+    
+    .actividad-info {
+        flex-direction: column;
+    }
+    
+    nav ul {
+        flex-direction: column;
+        align-items: center;
+        gap: 0.8em;
+    }
+    
+    nav ul li {
+        width: 100%;
+        text-align: center;
+    }
+}

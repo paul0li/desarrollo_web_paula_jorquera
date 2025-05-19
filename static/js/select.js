@@ -48,54 +48,187 @@ const region_comuna = {
   };
 
 const poblarRegiones = () => {
+  console.log("Cargando regiones desde la API...");
   let regionSelect = document.getElementById("region");
-  for (const region in region_comuna) {
-      let option = document.createElement("option");
-      option.value = region;
-      option.text = region;
-      regionSelect.appendChild(option);
-  }
+  
+  // Limpiar el dropdown de regiones
+  regionSelect.innerHTML = '<option value="">Seleccione una región</option>';
+  
+  // Obtener regiones desde la API
+  fetch('/api/regiones')
+    .then(response => {
+      if (!response.ok) {
+        throw new Error(`Error HTTP: ${response.status}`);
+      }
+      return response.json();
+    })
+    .then(regiones => {
+      console.log("Regiones recibidas:", regiones);
+      
+      // Agregar las regiones al dropdown
+      regiones.forEach(region => {
+        let option = document.createElement("option");
+        option.value = region.id; // Usar el ID como valor
+        option.text = region.nombre; // Mostrar el nombre
+        option.setAttribute('data-nombre', region.nombre); // Guardar el nombre como atributo
+        regionSelect.appendChild(option);
+      });
+    })
+    .catch(error => {
+      console.error("Error al obtener regiones:", error);
+      
+      // Fallback: usar los datos estáticos si la petición falla
+      console.log("Usando datos estáticos como fallback para regiones");
+      for (const region in region_comuna) {
+        let option = document.createElement("option");
+        option.value = region;
+        option.text = region;
+        regionSelect.appendChild(option);
+      }
+    });
 };
 
 const updateComunas = () => {
   let regionSelect = document.getElementById("region");
   let comunaSelect = document.getElementById("comuna");
-  let selectedRegion = regionSelect.value;
+  let selectedRegionId = regionSelect.value;
   
+  // Limpiar el dropdown de comunas
   comunaSelect.innerHTML = '<option value="">Seleccione una comuna</option>';
   
-  if (region_comuna[selectedRegion]) {
-    region_comuna[selectedRegion].forEach(comuna => {
+  if (!selectedRegionId) {
+    console.log("No se ha seleccionado ninguna región");
+    return;
+  }
+  
+  console.log("Cargando comunas para la región ID:", selectedRegionId);
+  
+  // Obtener comunas desde la API usando el ID de la región
+  fetch(`/api/comunas?region_id=${encodeURIComponent(selectedRegionId)}`)
+    .then(response => {
+      if (!response.ok) {
+        throw new Error(`Error HTTP: ${response.status}`);
+      }
+      return response.json();
+    })
+    .then(comunas => {
+      console.log("Comunas recibidas:", comunas);
+      
+      // Agregar las comunas al dropdown
+      comunas.forEach(comuna => {
+        let option = document.createElement("option");
+        option.value = comuna.id; // Usar el ID como valor
+        option.text = comuna.nombre; // Mostrar el nombre
+        option.setAttribute('data-nombre', comuna.nombre); // Guardar el nombre como atributo
+        comunaSelect.appendChild(option);
+      });
+      
+      // Si no hay comunas, mostrar un mensaje
+      if (comunas.length === 0) {
+        let option = document.createElement("option");
+        option.value = "";
+        option.text = "No hay comunas disponibles";
+        option.disabled = true;
+        comunaSelect.appendChild(option);
+      }
+    })
+    .catch(error => {
+      console.error("Error al obtener comunas:", error);
+      
+      // Fallback: usar los datos estáticos si la petición falla
+      const selectedOption = regionSelect.options[regionSelect.selectedIndex];
+      const regionNombre = selectedOption.getAttribute('data-nombre') || selectedOption.text;
+      
+      if (region_comuna[regionNombre]) {
+        console.log("Usando datos estáticos como fallback para la región:", regionNombre);
+        region_comuna[regionNombre].forEach(comuna => {
           let option = document.createElement("option");
-          option.value = comuna;
+          option.value = comuna; // En el fallback, usamos el nombre como valor
           option.text = comuna;
           comunaSelect.appendChild(option);
-      });
-  }
+        });
+      } else {
+        console.log("No se encontraron datos estáticos para la región:", regionNombre);
+      }
+    });
 };
 
 function extraContact() {
-  const contactoSelect = document.getElementById("contactar");
-  const contactoExtraContainer = document.getElementById("contactoExtraContainer");
-  const contactoTextarea = document.getElementById("contactoExtra");
+  // Seleccionar todos los checkboxes de contacto
+  const contactCheckboxes = document.querySelectorAll('.contact-checkbox');
   
-  if (contactoSelect.value !== "") {
-      contactoExtraContainer.style.display = "block";
-      contactoTextarea.style.display = "block";
+  // Agregar event listener a cada checkbox
+  contactCheckboxes.forEach(checkbox => {
+    // Eliminar event listeners previos para evitar duplicados
+    checkbox.removeEventListener('change', toggleContactField);
+    // Agregar nuevo event listener
+    checkbox.addEventListener('change', toggleContactField);
+    
+    // Inicializar el estado del campo extra según el estado actual del checkbox
+    const extraField = checkbox.closest('.contact-option').querySelector('.contacto-extra-field');
+    if (checkbox.checked) {
+      extraField.style.display = 'block';
+    } else {
+      extraField.style.display = 'none';
+    }
+  });
+}
+
+// Función para mostrar/ocultar el campo extra cuando se marca/desmarca un checkbox
+function toggleContactField(event) {
+  const checkbox = event.target;
+  const extraField = checkbox.closest('.contact-option').querySelector('.contacto-extra-field');
+  
+  if (checkbox.checked) {
+    extraField.style.display = 'block';
+    // Hacer que el campo sea requerido cuando está visible
+    const inputField = extraField.querySelector('input');
+    if (inputField) {
+      inputField.setAttribute('required', 'required');
+    }
   } else {
-      contactoExtraContainer.style.display = "none";
-      contactoTextarea.style.display = "none";
+    extraField.style.display = 'none';
+    // Quitar el atributo required cuando está oculto
+    const inputField = extraField.querySelector('input');
+    if (inputField) {
+      inputField.removeAttribute('required');
+    }
   }
 }
 
 function addPhoto() {
   const photoContainer = document.getElementById("fotosContainer");
-  const newPhotoInput = document.createElement("input");
-  newPhotoInput.type = "file";
-  newPhotoInput.name = "photo[]";
-  newPhotoInput.accept = "image/*";
+  
   if (photoContainer.childElementCount < 4) {
-    photoContainer.appendChild(newPhotoInput);
+    // Crear un contenedor para el input y el botón de eliminación
+    const photoInputContainer = document.createElement("div");
+    photoInputContainer.className = "photo-input-container";
+    
+    // Crear el input de tipo file
+    const newPhotoInput = document.createElement("input");
+    newPhotoInput.type = "file";
+    newPhotoInput.name = "foto[]";
+    newPhotoInput.accept = "image/*";
+    newPhotoInput.className = "photo-input";
+    
+    // Crear el botón de eliminación (cruz)
+    const deleteButton = document.createElement("button");
+    deleteButton.type = "button";
+    deleteButton.className = "delete-photo-btn";
+    deleteButton.innerHTML = "&times;";
+    deleteButton.title = "Eliminar foto";
+    
+    // Agregar evento para eliminar el contenedor cuando se hace clic en la cruz
+    deleteButton.addEventListener("click", function() {
+      photoContainer.removeChild(photoInputContainer);
+    });
+    
+    // Agregar los elementos al contenedor
+    photoInputContainer.appendChild(newPhotoInput);
+    photoInputContainer.appendChild(deleteButton);
+    
+    // Agregar el contenedor al DOM
+    photoContainer.appendChild(photoInputContainer);
   } else {
     alert("No se pueden agregar más de 5 fotos.");
     return;
@@ -103,12 +236,64 @@ function addPhoto() {
 }
 
 
+function handleTemaOtro() {
+  // Seleccionar todos los checkboxes de tema
+  const temaCheckboxes = document.querySelectorAll('.tema-checkbox');
+  
+  // Agregar event listener a cada checkbox
+  temaCheckboxes.forEach(checkbox => {
+    // Eliminar event listeners previos para evitar duplicados
+    checkbox.removeEventListener('change', toggleTemaOtroField);
+    // Agregar nuevo event listener
+    checkbox.addEventListener('change', toggleTemaOtroField);
+    
+    // Inicializar el estado del campo extra para "Otro"
+    if (checkbox.id === 'otro' && checkbox.checked) {
+      const otroField = document.querySelector('.tema-otro-field');
+      if (otroField) {
+        otroField.style.display = 'block';
+        const inputField = otroField.querySelector('input');
+        if (inputField) {
+          inputField.setAttribute('required', 'required');
+        }
+      }
+    }
+  });
+}
+
+// Función para mostrar/ocultar el campo de texto cuando se marca/desmarca el checkbox "Otro"
+function toggleTemaOtroField(event) {
+  const checkbox = event.target;
+  
+  // Solo mostrar/ocultar el campo si es el checkbox "Otro"
+  if (checkbox.id === 'otro') {
+    const otroField = document.querySelector('.tema-otro-field');
+    if (otroField) {
+      if (checkbox.checked) {
+        otroField.style.display = 'block';
+        // Hacer que el campo sea requerido cuando está visible
+        const inputField = otroField.querySelector('input');
+        if (inputField) {
+          inputField.setAttribute('required', 'required');
+        }
+      } else {
+        otroField.style.display = 'none';
+        // Quitar el atributo required cuando está oculto
+        const inputField = otroField.querySelector('input');
+        if (inputField) {
+          inputField.removeAttribute('required');
+        }
+      }
+    }
+  }
+}
+
 window.onload = () => {
   poblarRegiones();
   extraContact();
+  handleTemaOtro();
 
   document.getElementById("agregarFoto").addEventListener("click", addPhoto);
   document.getElementById("region").addEventListener("change", updateComunas);
-  document.getElementById("contactar").addEventListener("change", extraContact);
 
 };

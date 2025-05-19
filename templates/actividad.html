@@ -1,0 +1,137 @@
+{% extends "base.html" %}
+
+{% block title %}Detalle de Actividad{% endblock %}
+
+{% block header %}{% endblock %}
+
+{% block content %}
+  <div class="nav-buttons">
+    <a href="{{ url_for('listado') }}" class="back-button">Volver al listado</a>
+  </div>
+  
+  <h1>Detalle de Actividad</h1>
+  
+  <div class="actividad-detalle">
+    <div class="info-section">
+      <h2>Organizador</h2>
+      <div class="info-item organizador-item">
+        <span class="info-label">Nombre:</span>
+        <span class="info-value">{{ actividad.nombre }}</span>
+      </div>
+    </div>
+
+    <div class="info-section">
+      <h2>Información General</h2>
+      <div class="info-grid">
+        <div class="info-item">
+          <span class="info-label">Fecha de inicio:</span>
+          <span class="info-value">{{ actividad.dia_hora_inicio.strftime('%d-%m-%Y %H:%M') }}</span>
+        </div>
+        
+        <div class="info-item">
+          <span class="info-label">Fecha de término:</span>
+          <span class="info-value">
+            {% if actividad.dia_hora_termino %}
+              {% if actividad.dia_hora_termino > actividad.dia_hora_inicio %}
+                {{ actividad.dia_hora_termino.strftime('%d-%m-%Y %H:%M') }}
+              {% else %}
+                <span class="error-text">{{ actividad.dia_hora_termino.strftime('%d-%m-%Y %H:%M') }} (Error: Fecha inválida)</span>
+              {% endif %}
+            {% else %}
+              -
+            {% endif %}
+          </span>
+        </div>
+        
+        <div class="info-item">
+          <span class="info-label">Comuna:</span>
+          <span class="info-value">{{ comuna.nombre }}</span>
+        </div>
+        
+        <div class="info-item">
+          <span class="info-label">Región:</span>
+          <span class="info-value">{{ region.nombre }}</span>
+        </div>
+        
+        <div class="info-item">
+          <span class="info-label">Sector:</span>
+          <span class="info-value">{{ actividad.sector }}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="info-section">
+      <h2>Descripción</h2>
+      <div class="descripcion">
+        {{ actividad.descripcion }}
+      </div>
+    </div>
+    
+    <div class="info-section">
+      <h2>Temas</h2>
+      <div class="temas-container">
+        {% for tema in temas %}
+          <div class="tema-item">
+            {{ tema.tema }}{% if tema.glosa_otro %}: {{ tema.glosa_otro }}{% endif %}
+          </div>
+        {% else %}
+          <p>No hay temas registrados para esta actividad.</p>
+        {% endfor %}
+      </div>
+    </div>
+    
+    <div class="info-section">
+      <h2>Contacto</h2>
+      <div class="contactos-container">
+        {% for contacto in contactos %}
+          <div class="contacto-item">
+            <span class="contacto-tipo">{{ contacto.nombre }}</span>
+            <span class="contacto-valor">{{ contacto.identificador }}</span>
+          </div>
+        {% else %}
+          <p>No hay información de contacto registrada.</p>
+        {% endfor %}
+      </div>
+    </div>
+    
+    <div class="info-section">
+      <h2>Fotos</h2>
+      <div class="fotos-container" data-actividad-id="{{ actividad.id }}">
+        {% if fotos %}
+          <div class="galeria-fotos">
+            {% for foto in fotos %}
+              {% set foto_url = url_for('static', filename='uploads/' + foto.ruta_archivo) %}
+              <div class="foto-thumbnail">
+                <img src="{{ foto_url }}" alt="Foto de la actividad" class="thumbnail-img" 
+                     onclick="mostrarFoto('{{ foto_url }}', '{{ actividad.id }}', '{{ loop.index0 }}')">
+              </div>
+            {% endfor %}
+          </div>
+        {% else %}
+          <p>No hay fotos registradas para esta actividad.</p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+{% endblock %}
+
+{% block scripts %}
+<!-- Almacenar las URLs de las fotos como un atributo de datos en el HTML -->
+<div id="fotos-data" data-fotos='{% if fotos %}[{% for foto in fotos %}"{{ url_for('static', filename='uploads/' + foto.ruta_archivo) }}"{% if not loop.last %},{% endif %}{% endfor %}]{% else %}[]{% endif %}'></div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Preparar las URLs de las fotos para el visor
+    const contenedorFotos = document.querySelector('[data-actividad-id="{{ actividad.id }}"]');
+    const fotosData = document.getElementById('fotos-data');
+    
+    if (contenedorFotos && fotosData) {
+      // Obtener las URLs de las fotos del atributo de datos
+      const fotosUrls = JSON.parse(fotosData.getAttribute('data-fotos') || '[]');
+      
+      // Guardar las URLs en el atributo data-fotos del contenedor
+      contenedorFotos.setAttribute('data-fotos', JSON.stringify(fotosUrls));
+    }
+  });
+</script>
+{% endblock %}

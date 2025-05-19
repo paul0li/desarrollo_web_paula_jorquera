@@ -1,48 +1,27 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-  <meta charset="UTF-8" />
-  <title>Estadísticas - Actividades</title>
-  <link rel="stylesheet" href="./styles.css" />
-  <style>
-    .grafico {
-      text-align: center;
-      margin-bottom: 30px;
-    }
+{% extends "base.html" %}
 
-    .grafico img {
-      width: 100%;
-      max-width: 600px;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-    }
+{% block title %}Estadísticas - Actividades de Gatitos{% endblock %}
 
-    .grafico h3 {
-      margin-bottom: 10px;
-    }
-  </style>
-</head>
-<body>
-  <div class="main-container">
-    <h1>Estadísticas de Actividades</h1>
+{% block content %}
+    <div class="nav-buttons">
+        <a href="{{ url_for('index') }}" class="back-button">Volver a la portada</a>
+    </div>
+    
+    <h1>Estadísticas de Actividades de Gatitos</h1>
 
     <div class="grafico">
       <h3>Actividades por día</h3>
-      <img src="img/lineas_actividades_dia.png" alt="Gráfico de líneas - Actividades por día" />
+      <img src="{{ url_for('static', filename='img/lineas_actividades_dia.png') }}" alt="Gráfico de líneas - Actividades por día" />
     </div>
 
     <div class="grafico">
       <h3>Distribución por tipo de actividad</h3>
-      <img src="img/torta_temas.png" alt="Gráfico de torta - Actividades por tema" />
+      <img src="{{ url_for('static', filename='img/torta_temas.png') }}" alt="Gráfico de torta - Actividades por tema" />
     </div>
 
     <div class="grafico">
       <h3>Actividades por horario y mes</h3>
-      <img src="img/barras_horarios.png" alt="Gráfico de barras - Horario de actividades" />
+      <img src="{{ url_for('static', filename='img/barras_horarios.png') }}" alt="Gráfico de barras - Horario de actividades" />
     </div>
 
-    <br />
-    <a href="portada.html">Volver a la portada</a>
-  </div>
-</body>
-</html>
+{% endblock %}

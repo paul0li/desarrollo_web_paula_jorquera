@@ -1,24 +1,20 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Informar Actividad</title>
-  <link rel="stylesheet" type="text/css" href="./styles.css">
+{% extends "base.html" %}
 
-</head>
-<body>
-    <div class="main-container">
-        <div class="nav-buttons">
-            <a href="portada.html" class="back-button">Volver a la portada</a>
-        </div>
+{% block title %}Informar Actividad{% endblock %}
+
+{% block header %}{% endblock %}
+
+{% block content %}
+    <div class="nav-buttons">
+        <a href="{{ url_for('index') }}" class="back-button">Volver a la portada</a>
+    </div>
 
         <div id="val-box" hidden>
             <h2 id="val-msg"></h2>
             <ul id="val-list"></ul>
         </div>
 
-        <form id="actividadForm" method="post" enctype="multipart/form-data">
+        <form id="actividadForm" action="{{ url_for('agregar_actividad') }}" method="post" enctype="multipart/form-data">
             <h1>Informar Nueva Actividad</h1>
 
             <fieldset>
@@ -58,20 +54,50 @@
 
             <br/>
 
-            <label for="contactar">Contactar por:</label>
-            <select id="contactar" name="contactar">
-                <option value="">Seleccione una opción</option>
-                <option value="whatsapp">WhatsApp</option>
-                <option value="telegram">Telegram</option>
-                <option value="x">X</option>
-                <option value="instagram">Instagram</option>
-                <option value="tiktok">TikTok</option>
-                <option value="otra">Otra</option>
-            </select><br>
-
-            <div id="contactoExtraContainer" style="display: none; margin-top: 10px;">
-                <label for="contactoExtra">Username o URL:</label>
-                <input type="text" id="contactoExtra" name="contactoExtra" minlength="4" maxlength="50" />
+            <label>Contactar por:</label>
+            <div id="contactarOptions">
+                <div class="contact-option">
+                    <input type="checkbox" id="whatsapp" name="contactar[]" value="whatsapp" class="contact-checkbox">
+                    <label for="whatsapp">WhatsApp</label>
+                    <div class="contacto-extra-field" style="display: none;">
+                        <input type="text" name="contactoExtra[whatsapp]" minlength="4" maxlength="50" placeholder="Username o número de WhatsApp" />
+                    </div>
+                </div>
+                <div class="contact-option">
+                    <input type="checkbox" id="telegram" name="contactar[]" value="telegram" class="contact-checkbox">
+                    <label for="telegram">Telegram</label>
+                    <div class="contacto-extra-field" style="display: none;">
+                        <input type="text" name="contactoExtra[telegram]" minlength="4" maxlength="50" placeholder="Username de Telegram" />
+                    </div>
+                </div>
+                <div class="contact-option">
+                    <input type="checkbox" id="X" name="contactar[]" value="X" class="contact-checkbox">
+                    <label for="X">X</label>
+                    <div class="contacto-extra-field" style="display: none;">
+                        <input type="text" name="contactoExtra[X]" minlength="4" maxlength="50" placeholder="Username de X" />
+                    </div>
+                </div>
+                <div class="contact-option">
+                    <input type="checkbox" id="instagram" name="contactar[]" value="instagram" class="contact-checkbox">
+                    <label for="instagram">Instagram</label>
+                    <div class="contacto-extra-field" style="display: none;">
+                        <input type="text" name="contactoExtra[instagram]" minlength="4" maxlength="50" placeholder="Username de Instagram" />
+                    </div>
+                </div>
+                <div class="contact-option">
+                    <input type="checkbox" id="tiktok" name="contactar[]" value="tiktok" class="contact-checkbox">
+                    <label for="tiktok">TikTok</label>
+                    <div class="contacto-extra-field" style="display: none;">
+                        <input type="text" name="contactoExtra[tiktok]" minlength="4" maxlength="50" placeholder="Username de TikTok" />
+                    </div>
+                </div>
+                <div class="contact-option">
+                    <input type="checkbox" id="otra" name="contactar[]" value="otra" class="contact-checkbox">
+                    <label for="otra">Otra</label>
+                    <div class="contacto-extra-field" style="display: none;">
+                        <input type="text" name="contactoExtra[otra]" minlength="4" maxlength="50" placeholder="Especifique otro método de contacto" />
+                    </div>
+                </div>
             </div>
             </fieldset>
 
@@ -94,24 +120,51 @@
 
             <br/>
 
-            <label for="tema">Tema:</label>
-            <select id="tema" name="tema" required>
-                <option value="">Seleccione un tema</option>
-                <option value="musica">Música</option>
-                <option value="deporte">Deporte</option>
-                <option value="ciencias">Ciencias</option>
-                <option value="religion">Religión</option>
-                <option value="politica">Política</option>
-                <option value="tecnologia">Tecnología</option>
-                <option value="juegos">Juegos</option>
-                <option value="baile">Baile</option>
-                <option value="comida">Comida</option>
-                <option value="otro">Otro</option>
-            </select>
-
-            <div id="temaOtroContainer" style="display:none;">
-                <label for="temaOtro">Describe el tema:</label>
-                <input type="text" id="temaOtro" name="temaOtro" minlength="3" maxlength="15"/>
+            <label>Temas:</label>
+            <div id="temasOptions">
+                <div class="tema-option">
+                    <input type="checkbox" id="musica" name="tema[]" value="música" class="tema-checkbox">
+                    <label for="musica">Música</label>
+                </div>
+                <div class="tema-option">
+                    <input type="checkbox" id="deporte" name="tema[]" value="deporte" class="tema-checkbox">
+                    <label for="deporte">Deporte</label>
+                </div>
+                <div class="tema-option">
+                    <input type="checkbox" id="ciencias" name="tema[]" value="ciencias" class="tema-checkbox">
+                    <label for="ciencias">Ciencias</label>
+                </div>
+                <div class="tema-option">
+                    <input type="checkbox" id="religion" name="tema[]" value="religión" class="tema-checkbox">
+                    <label for="religion">Religión</label>
+                </div>
+                <div class="tema-option">
+                    <input type="checkbox" id="politica" name="tema[]" value="política" class="tema-checkbox">
+                    <label for="politica">Política</label>
+                </div>
+                <div class="tema-option">
+                    <input type="checkbox" id="tecnologia" name="tema[]" value="tecnología" class="tema-checkbox">
+                    <label for="tecnologia">Tecnología</label>
+                </div>
+                <div class="tema-option">
+                    <input type="checkbox" id="juegos" name="tema[]" value="juegos" class="tema-checkbox">
+                    <label for="juegos">Juegos</label>
+                </div>
+                <div class="tema-option">
+                    <input type="checkbox" id="baile" name="tema[]" value="baile" class="tema-checkbox">
+                    <label for="baile">Baile</label>
+                </div>
+                <div class="tema-option">
+                    <input type="checkbox" id="comida" name="tema[]" value="comida" class="tema-checkbox">
+                    <label for="comida">Comida</label>
+                </div>
+                <div class="tema-option">
+                    <input type="checkbox" id="otro" name="tema[]" value="otro" class="tema-checkbox">
+                    <label for="otro">Otro</label>
+                    <div class="tema-otro-field" style="display: none;">
+                        <input type="text" id="temaOtro" name="temaOtro" minlength="3" maxlength="15" placeholder="Nombre del tema"/>
+                    </div>
+                </div>
             </div>
 
             <br/>
@@ -124,7 +177,7 @@
 
             <br/>
              
-            <button type="submit" id="submit-btn">Agregar esta actividad</button>
+            <button type="button" id="submit-btn">Agregar esta actividad</button>
         </form>
 
 
@@ -136,14 +189,24 @@
           
           <div id="agradecimiento" hidden>
             <h2>Hemos recibido su información, muchas gracias y suerte en su actividad</h2>
-            <button onclick="location.href='portada.html'">Volver a la portada</button>
+            <button id="volverBtn">Volver a la portada</button>
           </div>
           
-    <script src="./js/select.js"></script>
-    <script src="./js/validation.js"></script>
-    <script src="js/visor.js" type="module"></script>
+{% endblock %}
 
-</body>
-</html>
+{% block scripts %}
+    <script src="{{ url_for('static', filename='js/select.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/validation.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/actividad-form.js') }}"></script>
+    <script>
+      // Agregar la URL de redirección al botón de volver
+      document.addEventListener('DOMContentLoaded', function() {
+        const volverBtn = document.getElementById('volverBtn');
+        if (volverBtn) {
+          volverBtn.setAttribute('data-url', "{{ url_for('index') }}");
+        }
+      });
+    </script>
+{% endblock %}
 
 
