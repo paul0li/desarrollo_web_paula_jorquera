@@ -1,59 +1,90 @@
 /* base.css - Estilos base, tipografía, colores, reset */
 
-@import url('https://fonts.googleapis.com/css2?family=Amatic+SC:wght@700&family=Crimson+Text&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@400;700&family=Poppins:wght@300;400;600&display=swap');
 
-/* Variables de colores */
+/* Variables de colores - Esquema minimalista blanco y negro */
 :root {
-    --color-primary: #b08968;
-    --color-primary-dark: #8b6b4a;
-    --color-primary-light: #ddbea9;
-    --color-background: #fdfbf7;
-    --color-text: #5c4033;
-    --color-text-dark: #6b4423;
-    --color-error: #dc3545;
-    --color-success: #28a745;
-    --color-info: #17a2b8;
-    --color-warning: #ffc107;
+    --color-primary: #000000;
+    --color-primary-dark: #333333;
+    --color-primary-light: #666666;
+    --color-background: #ffffff;
+    --color-text: #000000;
+    --color-text-dark: #333333;
+    --color-error: #ff3333;
+    --color-success: #33cc33;
+    --color-info: #3399ff;
+    --color-warning: #ffcc00;
 }
 
 /* Estilos generales */
 body {
-    font-family: 'Crimson Text', serif;
-    background-color: #f5e6d3;
-    background-image: url('data:image/svg+xml,%3Csvg width="100" height="100" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"%3E%3Cpath d="M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z" fill="%23ddbea9" fill-opacity="0.1" fill-rule="evenodd"/%3E%3C/svg%3E');
+    font-family: 'Poppins', sans-serif;
+    background-color: #ffffff;
+    background-image: url('data:image/svg+xml,%3Csvg width="100" height="100" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"%3E%3Cpath d="M30 40c5.5 0 10-4.5 10-10s-4.5-10-10-10-10 4.5-10 10 4.5 10 10 10zm40 40c5.5 0 10-4.5 10-10s-4.5-10-10-10-10 4.5-10 10 4.5 10 10 10zm-40-25c2.8 0 5-2.2 5-5s-2.2-5-5-5-5 2.2-5 5 2.2 5 5 5zm40 5c2.8 0 5-2.2 5-5s-2.2-5-5-5-5 2.2-5 5 2.2 5 5 5zm-20-20c2.8 0 5-2.2 5-5s-2.2-5-5-5-5 2.2-5 5 2.2 5 5 5z" fill="%23000000" fill-opacity="0.03" fill-rule="evenodd"/%3E%3C/svg%3E');
     margin: 0;
     padding: 20px 0;
     display: flex;
     justify-content: center;
-    color: #5c4033;
+    color: #000000;
     line-height: 1.6;
 }
 
 /* Tipografía */
 h1, h2, h3 {
-    font-family: 'Amatic SC', cursive;
-    color: #6b4423;
+    font-family: 'Josefin Sans', sans-serif;
+    color: #000000;
     letter-spacing: 1px;
 }
 
 h1 {
-    font-size: 3em;
+    font-size: 2.5em;
     text-align: center;
     margin-bottom: 30px;
-    border-bottom: 2px solid #ddbea9;
+    border-bottom: 2px solid #000000;
     padding-bottom: 10px;
+    position: relative;
+}
+
+h1::after {
+    content: '';
+    position: absolute;
+    bottom: -15px;
+    right: 20px;
+    width: 60px;
+    height: 60px;
+    background-image: url('../img/asoma1.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    transform: rotate(10deg);
+    z-index: 1;
 }
 
 /* Contenedor principal */
 .main-container {
-    background-color: #fdfbf7;
+    background-color: #ffffff;
     padding: 40px;
     border-radius: 15px;
-    box-shadow: 0 4px 20px rgba(92, 64, 51, 0.15);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
     max-width: 800px;
     width: 90%;
     box-sizing: border-box;
-    border: 1px solid #ddbea9;
+    border: 1px solid #000000;
+    position: relative;
+    overflow: hidden;
+}
+
+.main-container::before {
+    content: '';
+    position: absolute;
+    top: -30px;
+    left: 20px;
+    width: 60px;
+    height: 60px;
+    background-image: url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"%3E%3Cpath d="M65 10c-5.5 0-10 4.5-10 10s4.5 10 10 10 10-4.5 10-10-4.5-10-10-10zm0 15c-2.8 0-5-2.2-5-5s2.2-5 5-5 5 2.2 5 5-2.2 5-5 5zm-30-5c0-8.3 6.7-15 15-15s15 6.7 15 15-6.7 15-15 15-15-6.7-15-15zm-5 0c0 11 9 20 20 20s20-9 20-20-9-20-20-20-20 9-20 20zm-10 40c0-5.5 4.5-10 10-10s10 4.5 10 10-4.5 10-10 10-10-4.5-10-10zm5 0c0 2.8 2.2 5 5 5s5-2.2 5-5-2.2-5-5-5-5 2.2-5 5zm40-10c5.5 0 10 4.5 10 10s-4.5 10-10 10-10-4.5-10-10 4.5-10 10-10zm0 15c2.8 0 5-2.2 5-5s-2.2-5-5-5-5 2.2-5 5 2.2 5 5 5zm-20-5c0-8.3 6.7-15 15-15s15 6.7 15 15-6.7 15-15 15-15-6.7-15-15zm-5 0c0 11 9 20 20 20s20-9 20-20-9-20-20-20-20 9-20 20z" fill="%23000000" fill-opacity="0.05"/%3E%3C/svg%3E');
+    background-repeat: no-repeat;
+    transform: rotate(-15deg);
+    z-index: 0;
+    opacity: 0.7;
 }
 
 /* Formularios básicos */
@@ -61,8 +92,8 @@ label {
     font-weight: 600;
     display: block;
     margin-bottom: 8px;
-    color: #5c4033;
-    font-size: 1.1em;
+    color: #000000;
+    font-size: 1em;
 }
 
 input[type="email"],
@@ -76,29 +107,30 @@ textarea {
     width: 100%;
     padding: 12px;
     margin-bottom: 20px;
-    border: 1px solid #ddbea9;
+    border: 1px solid #000000;
     border-radius: 8px;
     font-size: 16px;
     box-sizing: border-box;
-    background-color: #fdfbf7;
-    color: #5c4033;
+    background-color: #ffffff;
+    color: #000000;
     transition: all 0.3s ease;
-    font-family: 'Crimson Text', serif;
+    font-family: 'Poppins', sans-serif;
+    position: relative;
 }
 
 input:focus,
 select:focus,
 textarea:focus {
     outline: none;
-    border-color: #b08968;
-    box-shadow: 0 0 8px rgba(176, 137, 104, 0.2);
+    border-color: #333333;
+    box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
 }
 
 select {
     cursor: pointer;
     appearance: none;
     padding-right: 30px;
-    background-image: url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="%235c4033" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"%3E%3Cpolyline points="6 9 12 15 18 9"%3E%3C/polyline%3E%3C/svg%3E');
+    background-image: url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="%23000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"%3E%3Cpolyline points="6 9 12 15 18 9"%3E%3C/polyline%3E%3C/svg%3E');
     background-repeat: no-repeat;
     background-position: right 10px center;
     background-size: 16px;
@@ -106,12 +138,34 @@ select {
 
 input[type="file"] {
     padding: 10px;
-    background-color: #fdfbf7;
-    border: 1px dashed #ddbea9;
+    background-color: #ffffff;
+    border: 1px dashed #000000;
+    position: relative;
+}
+
+input[type="file"]::before {
+    content: '';
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    width: 30px;
+    height: 30px;
+    background-image: url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"%3E%3Cpath d="M65 30c-2.8 0-5 2.2-5 5s2.2 5 5 5 5-2.2 5-5-2.2-5-5-5zm-30 0c-2.8 0-5 2.2-5 5s2.2 5 5 5 5-2.2 5-5-2.2-5-5-5zm15 20c-8.3 0-15-6.7-15-15s6.7-15 15-15 15 6.7 15 15-6.7 15-15 15zm0-40c-13.8 0-25 11.2-25 25s11.2 25 25 25 25-11.2 25-25-11.2-25-25-25zm0 60c-5.5 0-10 4.5-10 10s4.5 10 10 10 10-4.5 10-10-4.5-10-10-10z" fill="%23000000"/%3E%3C/svg%3E');
+    background-repeat: no-repeat;
+    transform: rotate(10deg);
+    z-index: 1;
+    pointer-events: none;
 }
 
 /* Animaciones */
 @keyframes fadeIn {
     from { opacity: 0; transform: translateY(-10px); }
     to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes peekIn {
+    0% { transform: translateY(100%); }
+    20% { transform: translateY(0); }
+    80% { transform: translateY(0); }
+    100% { transform: translateY(100%); }
 }

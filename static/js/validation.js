@@ -184,11 +184,11 @@ submitBtn.addEventListener("click", (e) => {
     errorMessages.push("Debe seleccionar un tema");
   }
   
-  // Validar que la fecha de término sea posterior a la fecha de inicio
+  // Validar que la fecha de término sea posterior a la fecha de inicio, si es que la fecha de termino existe
   const fechaInicio = new Date(myForm["inicio"].value);
   const fechaTermino = new Date(myForm["termino"].value);
   
-  if (myForm["termino"].value && fechaTermino <= fechaInicio) {
+  if (fechaTermino <= fechaInicio && fechaTermino) {
     isValid = false;
     errorMessages.push("La fecha y hora de término debe ser posterior a la fecha y hora de inicio");
   }
