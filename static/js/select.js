@@ -63,14 +63,14 @@ const poblarRegiones = () => {
       return response.json();
     })
     .then(regiones => {
-      console.log("Regiones recibidas:", regiones);
+      console.log("Regiones recibidas");
       
       // Agregar las regiones al dropdown
       regiones.forEach(region => {
         let option = document.createElement("option");
-        option.value = region.id; // Usar el ID como valor
-        option.text = region.nombre; // Mostrar el nombre
-        option.setAttribute('data-nombre', region.nombre); // Guardar el nombre como atributo
+        option.value = region.id; 
+        option.text = region.nombre; 
+        option.setAttribute('data-nombre', region.nombre); 
         regionSelect.appendChild(option);
       });
     })
@@ -97,12 +97,9 @@ const updateComunas = () => {
   comunaSelect.innerHTML = '<option value="">Seleccione una comuna</option>';
   
   if (!selectedRegionId) {
-    console.log("No se ha seleccionado ninguna región");
     return;
   }
-  
-  console.log("Cargando comunas para la región ID:", selectedRegionId);
-  
+    
   // Obtener comunas desde la API usando el ID de la región
   fetch(`/api/comunas?region_id=${encodeURIComponent(selectedRegionId)}`)
     .then(response => {
@@ -112,7 +109,6 @@ const updateComunas = () => {
       return response.json();
     })
     .then(comunas => {
-      console.log("Comunas recibidas:", comunas);
       
       // Agregar las comunas al dropdown
       comunas.forEach(comuna => {
@@ -147,24 +143,18 @@ const updateComunas = () => {
           option.text = comuna;
           comunaSelect.appendChild(option);
         });
-      } else {
-        console.log("No se encontraron datos estáticos para la región:", regionNombre);
-      }
+      } 
     });
 };
 
 function extraContact() {
-  // Seleccionar todos los checkboxes de contacto
   const contactCheckboxes = document.querySelectorAll('.contact-checkbox');
   
-  // Agregar event listener a cada checkbox
   contactCheckboxes.forEach(checkbox => {
-    // Eliminar event listeners previos para evitar duplicados
     checkbox.removeEventListener('change', toggleContactField);
-    // Agregar nuevo event listener
+    checkbox.removeEventListener('change', toggleContactField);
     checkbox.addEventListener('change', toggleContactField);
     
-    // Inicializar el estado del campo extra según el estado actual del checkbox
     const extraField = checkbox.closest('.contact-option').querySelector('.contacto-extra-field');
     if (checkbox.checked) {
       extraField.style.display = 'block';
@@ -181,14 +171,12 @@ function toggleContactField(event) {
   
   if (checkbox.checked) {
     extraField.style.display = 'block';
-    // Hacer que el campo sea requerido cuando está visible
     const inputField = extraField.querySelector('input');
     if (inputField) {
       inputField.setAttribute('required', 'required');
     }
   } else {
     extraField.style.display = 'none';
-    // Quitar el atributo required cuando está oculto
     const inputField = extraField.querySelector('input');
     if (inputField) {
       inputField.removeAttribute('required');
@@ -200,11 +188,9 @@ function addPhoto() {
   const photoContainer = document.getElementById("fotosContainer");
   
   if (photoContainer.childElementCount < 4) {
-    // Crear un contenedor para el input y el botón de eliminación
     const photoInputContainer = document.createElement("div");
     photoInputContainer.className = "photo-input-container";
     
-    // Crear el input de tipo file
     const newPhotoInput = document.createElement("input");
     newPhotoInput.type = "file";
     newPhotoInput.name = "foto[]";
@@ -237,14 +223,10 @@ function addPhoto() {
 
 
 function handleTemaOtro() {
-  // Seleccionar todos los checkboxes de tema
   const temaCheckboxes = document.querySelectorAll('.tema-checkbox');
   
-  // Agregar event listener a cada checkbox
   temaCheckboxes.forEach(checkbox => {
-    // Eliminar event listeners previos para evitar duplicados
     checkbox.removeEventListener('change', toggleTemaOtroField);
-    // Agregar nuevo event listener
     checkbox.addEventListener('change', toggleTemaOtroField);
     
     // Inicializar el estado del campo extra para "Otro"

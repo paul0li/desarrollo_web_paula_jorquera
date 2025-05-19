@@ -1,54 +1,120 @@
 # Plataforma de Actividades - Desarrollo Web TAREA 2
 
-Este proyecto es una plataforma web para gestionar y visualizar actividades relacionadas con gatos y cine, desarrollada para el curso de Desarrollo Web en la Universidad de Chile.
+Este proyecto es una plataforma web para gestionar y visualizar actividades, desarrollada para el curso de Desarrollo Web en la Universidad de Chile. La aplicación permite registrar actividades, ver su listado, visualizar detalles y está preparada para mostrar estadísticas en futuras implementaciones.
 
-## Decisiones de Diseño
+## Implementación
 
-### 1. Estilo Bohemio
-Se implementó un diseño con estética bohemia, caracterizado por:
-- Paleta de colores cálidos y terrosos (#f5e6d3, #ddbea9, #b08968)
-- Tipografía combinada: 'Amatic SC' para títulos y 'Crimson Text' para texto
-- Elementos decorativos sutiles como bordes redondeados y sombras suaves
-- Transiciones suaves para mejorar la interactividad
+### Tecnologías Utilizadas
+- **Backend**: Python con Flask
+- **Base de Datos**: MySQL con SQLAlchemy como ORM
+- **Frontend**: HTML5, CSS3, JavaScript
+- **Plantillas**: Jinja2
 
-### 2. Visor de Imágenes
-Se implementó un visor de imágenes con las siguientes características:
-- Diseño modal con fondo semitransparente
-- Vista ampliada de imágenes al hacer clic
-- Controles intuitivos (botón de cierre, tecla Escape)
-- Efecto hover en miniaturas para indicar interactividad
+### Estructura del Proyecto
 
-### 3. Estructura Modular
-El código se organizó de manera modular:
-- Componentes reutilizables (visor.html)
-- Separación de estilos (styles.css)
-- JavaScript modular (visor.js, validation.js)
-
-### 4. Validación de Formularios
-Se implementó validación de formularios con:
-- Validación en tiempo real
-- Mensajes de error claros y descriptivos
-- Estilos visuales para estados de validación
-
-## Consideraciones Técnicas
-
-### Compatibilidad
-- El proyecto utiliza JavaScript moderno
-- Se recomienda usar navegadores actualizados (Chrome, Firefox, Safari)
-- Las imágenes deben estar ubicadas en la carpeta img/
-
-### Estructura de Archivos
 ```
 .
-├── components/
-│   └── visor.html
-├── js/
-│   ├── visor.js
-│   └── validation.js
-├── img/
-├── styles.css
-├── portada.html
-├── listado.html
-└── form.html
+├── app.py                  # Aplicación principal Flask
+├── db/                     # Módulos de base de datos
+│   ├── db.py               # Modelos y funciones de acceso a datos
+│   ├── init_db.py          # Script de inicialización de la base de datos
+│   ├── tarea2.sql          # Estructura de la base de datos
+│   ├── region-comuna.sql   # Datos de regiones y comunas
+│   └── create_user.sql     # Script para crear usuario de la base de datos
+├── static/                 # Archivos estáticos
+│   ├── css/                # Hojas de estilo
+│   │   ├── base.css        # Estilos base y tipografía
+│   │   ├── components.css  # Componentes reutilizables
+│   │   ├── layout.css      # Estructura y responsividad
+│   │   └── main.css        # Importa los otros archivos CSS
+│   ├── js/                 # JavaScript
+│   │   ├── validation.js   # Validación de formularios
+│   │   └── visor.js        # Visor de imágenes
+│   ├── img/                # Imágenes del sitio
+│   └── uploads/            # Carpeta para archivos subidos
+└── templates/              # Plantillas Jinja2
+    ├── base.html           # Plantilla base con estructura común
+    ├── portada.html        # Página de inicio
+    ├── form.html           # Formulario para agregar actividades
+    ├── listado.html        # Listado de actividades con paginación
+    ├── actividad.html      # Detalle de una actividad
+    └── estadisticas.html   # Página de estadísticas (pendiente)
 ```
 
+### Funcionalidades Implementadas
+
+#### 1. Portada
+- Muestra mensaje de bienvenida
+- Menú de navegación completo
+- Listado de las últimas 5 actividades desde la base de datos
+- Cada actividad muestra su información básica y una imagen si está disponible
+
+#### 2. Formulario de Actividades
+- Validación en tiempo real con JavaScript en el lado del cliente
+- Validación en el servidor con Flask
+- Almacenamiento de múltiples imágenes
+- Soporte para múltiples temas y métodos de contacto
+- Manejo de errores con mensajes descriptivos
+- Redirección a la portada tras agregar exitosamente
+
+#### 3. Listado de Actividades
+- Obtiene actividades desde la base de datos
+- Implementa paginación mostrando 5 actividades por página
+- Controles de navegación entre páginas
+- Enlace a la vista detallada de cada actividad
+
+#### 4. Vista Detallada de Actividad
+- Muestra toda la información de la actividad seleccionada
+- Visor de imágenes con diseño modal
+- Muestra temas y métodos de contacto relacionados
+- Información de ubicación (región y comuna)
+
+### Decisiones de Implementación
+
+#### Base de Datos
+- Se utiliza SQLAlchemy como ORM para interactuar con MySQL
+- Modelos definidos para: Región, Comuna, Actividad, Foto, ContactarPor y ActividadTema
+- Relaciones establecidas entre entidades para facilitar consultas
+
+#### Estructura CSS
+Se organizó el CSS en tres archivos principales:
+- **base.css**: Estilos base, tipografía, colores y reset
+- **components.css**: Componentes reutilizables como botones, navegación y tablas
+- **layout.css**: Estructura, páginas específicas y estilos responsivos
+
+#### Validación
+- **Cliente**: Validación en tiempo real con JavaScript
+- **Servidor**: Validación adicional en Flask antes de guardar en la base de datos
+- Manejo de errores para evitar datos inconsistentes
+
+#### Seguridad
+- Sanitización de entradas para prevenir inyección SQL
+- Nombres de archivo seguros para uploads
+- Validación de tipos de archivo permitidos
+- Límite de tamaño para archivos subidos
+
+## Configuración
+
+### Requisitos
+- Python 3.8+
+- MySQL 5.7+
+- Paquetes de Python: Flask, SQLAlchemy, PyMySQL
+
+### Instrucciones de Instalación
+1. Clonar el repositorio
+2. Crear un entorno virtual: `python -m venv venv`
+3. Activar el entorno: `source venv/bin/activate` (Linux/Mac) o `venv\Scripts\activate` (Windows)
+4. Instalar dependencias: `pip install -r requirements.txt`
+5. Configurar la base de datos MySQL:
+   - Crear la base de datos: `CREATE DATABASE tarea2;`
+   - Crear usuario: `CREATE USER 'cc5002'@'localhost' IDENTIFIED BY 'programacionweb';`
+   - Otorgar permisos: `GRANT ALL PRIVILEGES ON tarea2.* TO 'cc5002'@'localhost';`
+6. Inicializar la base de datos: `python db/init_db.py`
+7. Ejecutar la aplicación: `python app.py`
+
+## Notas Adicionales
+
+- La aplicación está diseñada con una estética minimalista
+- Se ha priorizado la experiencia de usuario con validaciones claras
+- El visor de imágenes proporciona una experiencia fluida para visualizar fotos
+- La estructura modular facilita el mantenimiento y extensión del código
