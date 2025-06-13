@@ -21,6 +21,9 @@ import uuid
 
 UPLOAD_FOLDER = 'static/uploads'
 
+# Crear la carpeta uploads si no existe
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'programacionweb_tarea2_key'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
