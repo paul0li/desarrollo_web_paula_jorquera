@@ -9,19 +9,73 @@
     
     <h1>Estadísticas de Actividades de Gatitos</h1>
 
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script src="https://code.highcharts.com/modules/exporting.js"></script>
+    <script src="https://code.highcharts.com/modules/export-data.js"></script>
+    <script src="https://code.highcharts.com/modules/accessibility.js"></script>
+
     <div class="grafico">
       <h3>Actividades por día</h3>
-      <img src="{{ url_for('static', filename='img/lineas_actividades_dia.png') }}" alt="Gráfico de líneas - Actividades por día" />
+      <div id="line-chart"></div>
     </div>
 
     <div class="grafico">
       <h3>Distribución por tipo de actividad</h3>
-      <img src="{{ url_for('static', filename='img/torta_temas.png') }}" alt="Gráfico de torta - Actividades por tema" />
+      <div id="pie-chart"></div>
     </div>
 
     <div class="grafico">
       <h3>Actividades por horario y mes</h3>
-      <img src="{{ url_for('static', filename='img/barras_horarios.png') }}" alt="Gráfico de barras - Horario de actividades" />
+      <div id="bar-chart"></div>
     </div>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', function () {
+        // Line Chart
+        fetch('/api/estadisticas/line_chart')
+          .then(response => response.json())
+          .then(data => {
+            Highcharts.chart('line-chart', {
+              chart: { type: 'line' },
+              title: { text: 'Actividades por día' },
+              xAxis: { categories: data.days },
+              yAxis: { title: { text: 'Cantidad de actividades' } },
+              series: [{ name: 'Actividades', data: data.activities }]
+            });
+          });
+
+        // Pie Chart
+        fetch('/api/estadisticas/pie_chart')
+          .then(response => response.json())
+          .then(data => {
+            Highcharts.chart('pie-chart', {
+              chart: { type: 'pie' },
+              title: { text: 'Distribución por tipo de actividad' },
+              series: [{
+                name: 'Proporción',
+                colorByPoint: true,
+                data: data.types.map((type, index) => ({ name: type, y: data.proportions[index] }))
+              }]
+            });
+          });
+
+        // Bar Chart
+        fetch('/api/estadisticas/bar_chart')
+          .then(response => response.json())
+          .then(data => {
+            Highcharts.chart('bar-chart', {
+              chart: { type: 'column' },
+              title: { text: 'Actividades por horario y mes' },
+              xAxis: { categories: data.months },
+              yAxis: { min: 0, title: { text: 'Cantidad de actividades' } },
+              series: [
+                { name: 'Mañana', data: data.morning },
+                { name: 'Mediodía', data: data.midday },
+                { name: 'Tarde', data: data.afternoon }
+              ]
+            });
+          });
+      });
+    </script>
 
 {% endblock %}
