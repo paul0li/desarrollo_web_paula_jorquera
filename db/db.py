@@ -1,4 +1,4 @@
-from sqlalchemy import create_engine, Column, Integer, String, ForeignKey, DateTime, Enum
+from sqlalchemy import create_engine, Column, Integer, String, ForeignKey, DateTime, Enum, func, extract, case
 from sqlalchemy.orm import sessionmaker, declarative_base, relationship
 import json
 
@@ -66,7 +66,16 @@ class ActividadTema(Base):
     glosa_otro = Column(String(15), nullable=True)
     actividad_id = Column(Integer, ForeignKey('actividad.id'), primary_key=True, nullable=False)
 
-# --- Database Functions ---
+class Comentario(Base):
+    __tablename__ = 'comentario'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    nombre = Column(String(80), nullable=False)
+    texto = Column(String(300), nullable=False)
+    fecha = Column(DateTime, nullable=False)
+    actividad_id = Column(Integer, ForeignKey('actividad.id'), nullable=False)
+    actividad = relationship('Actividad', backref='comentarios', lazy=True)
+
+#Database Functions 
 
 def get_regions():
     session = SessionLocal()
@@ -113,25 +122,37 @@ def get_actividades_count():
 
 def get_ultimas_actividades(limit=5):
     session = SessionLocal()
-    actividades = session.query(
-        Actividad, Comuna, Region, ActividadTema
+    
+    actividades_base = session.query(
+        Actividad, Comuna, Region
     ).join(
         Comuna, Actividad.comuna_id == Comuna.id
     ).join(
         Region, Comuna.region_id == Region.id
-    ).join(
-        ActividadTema, Actividad.id == ActividadTema.actividad_id
     ).order_by(
         Actividad.dia_hora_inicio.desc()
     ).limit(limit).all()
+    
+    resultado = []
+    for act, comuna, region in actividades_base:
+        # Obtener el primer tema de la actividad
+        tema = session.query(ActividadTema).filter_by(actividad_id=act.id).first()
+        if tema:
+            resultado.append((act, comuna, region, tema))
+        else:
+            # Crear un tema vacío si no hay temas
+            tema_vacio = ActividadTema()
+            tema_vacio.tema = "Sin tema"
+            tema_vacio.glosa_otro = None
+            resultado.append((act, comuna, region, tema_vacio))
+    
     session.close()
-    return actividades
+    return resultado
 
 def get_actividades_paginadas(page_size=5, page=1):
     offset = (page - 1) * page_size
     session = SessionLocal()
     
-    # Primero obtenemos las actividades paginadas sin el join con temas
     actividades_base = session.query(
         Actividad, Comuna, Region
     ).join(
@@ -142,7 +163,6 @@ def get_actividades_paginadas(page_size=5, page=1):
         Actividad.dia_hora_inicio.desc()
     ).offset(offset).limit(page_size).all()
     
-    # Luego, para cada actividad, obtenemos su primer tema (para mantener compatibilidad)
     resultado = []
     for act, comuna, region in actividades_base:
         # Obtener el primer tema de la actividad
@@ -150,9 +170,7 @@ def get_actividades_paginadas(page_size=5, page=1):
         if tema:
             resultado.append((act, comuna, region, tema))
         else:
-            # Si no hay tema, creamos un objeto vacío para mantener la estructura
-            from sqlalchemy import inspect
-            mapper = inspect(ActividadTema)
+
             tema_vacio = ActividadTema()
             tema_vacio.tema = "Sin tema"
             tema_vacio.glosa_otro = None
@@ -226,8 +244,7 @@ def create_actividad(comuna_id, sector, nombre, email, celular, dia_hora_inicio,
     )
     session.add(actividad)
     session.commit()
-    session.refresh(actividad)  # Refresh to get the generated ID
-    actividad_id = actividad.id
+    session.refresh(actividad) 
     session.close()
     return actividad
 
@@ -239,20 +256,8 @@ def create_tema(actividad_id, tema, glosa_otro=None):
     session.add(tema_obj)
     session.commit()
     
-    # Get the ID before closing the session
-    tema_id = tema_obj.id
-    
-    # Create a detached copy of the object's attributes
-    tema_dict = {
-        'id': tema_id,
-        'actividad_id': actividad_id,
-        'tema': tema,
-        'glosa_otro': glosa_otro
-    }
-    
     session.close()
     
-    # Return the detached object with its ID
     return tema_obj
 
 def create_contacto_por(actividad_id, nombre, identificador):
@@ -263,20 +268,10 @@ def create_contacto_por(actividad_id, nombre, identificador):
     session.add(contacto)
     session.commit()
     
-    # Get the ID before closing the session
-    contacto_id = contacto.id
-    
-    # Create a detached copy of the object's attributes
-    contacto_dict = {
-        'id': contacto_id,
-        'actividad_id': actividad_id,
-        'nombre': nombre,
-        'identificador': identificador
-    }
+
     
     session.close()
     
-    # Return the detached object with its ID
     return contacto
 
 def create_foto(actividad_id, ruta_archivo, nombre_archivo):
@@ -287,18 +282,85 @@ def create_foto(actividad_id, ruta_archivo, nombre_archivo):
     session.add(foto)
     session.commit()
     
-    # Get the ID before closing the session
-    foto_id = foto.id
+    session.close()
     
-    # Create a detached copy of the object's attributes
-    foto_dict = {
-        'id': foto_id,
-        'actividad_id': actividad_id,
-        'ruta_archivo': ruta_archivo,
-        'nombre_archivo': nombre_archivo
-    }
+    return foto
+
+def get_estadisticas_actividades_por_dia():
+    """Obtiene el número de actividades por día"""
+    session = SessionLocal()
+    
+    # Agrupa por fecha (sin hora) y cuenta actividades
+    stats = session.query(
+        func.date(Actividad.dia_hora_inicio).label('fecha'),
+        func.count(Actividad.id).label('cantidad')
+    ).group_by(
+        func.date(Actividad.dia_hora_inicio)
+    ).order_by(
+        func.date(Actividad.dia_hora_inicio)
+    ).limit(30).all()  # Últimos 30 días con actividades
+    
+    session.close()
+    return stats
+
+def get_estadisticas_actividades_por_horario():
+    """Obtiene el número de actividades por horario (mañana, mediodía, tarde) agrupado por mes"""
+    session = SessionLocal()
+    
+    # Definimos los períodos del día basados en la hora
+    horario_case = case(
+        (extract('hour', Actividad.dia_hora_inicio) < 12, 'mañana'),
+        (extract('hour', Actividad.dia_hora_inicio) < 18, 'mediodía'),
+        else_='tarde'
+    )
+    
+    stats = session.query(
+        extract('year', Actividad.dia_hora_inicio).label('año'),
+        extract('month', Actividad.dia_hora_inicio).label('mes'),
+        horario_case.label('horario'),
+        func.count(Actividad.id).label('cantidad')
+    ).group_by(
+        extract('year', Actividad.dia_hora_inicio),
+        extract('month', Actividad.dia_hora_inicio),
+        horario_case
+    ).order_by(
+        extract('year', Actividad.dia_hora_inicio),
+        extract('month', Actividad.dia_hora_inicio)
+    ).all()
+    
+    session.close()
+    return stats
+
+def get_comentarios_by_actividad(actividad_id):
+    """Obtiene todos los comentarios de una actividad específica"""
+    session = SessionLocal()
+    comentarios = session.query(Comentario).filter_by(actividad_id=actividad_id).order_by(Comentario.fecha.desc()).all()
+    session.close()
+    return comentarios
+
+def create_comentario(actividad_id, nombre, texto):
+    """Crea un nuevo comentario para una actividad"""
+    session = SessionLocal()
+    import datetime
+    
+    comentario = Comentario(
+        actividad_id=actividad_id,
+        nombre=nombre,
+        texto=texto,
+        fecha=datetime.datetime.now()
+    )
+    session.add(comentario)
+    session.commit()
+    
+    comentario_id = comentario.id
+    comentario_fecha = comentario.fecha
     
     session.close()
     
-    # Return the detached object with its ID
-    return foto
+    return {
+        'id': comentario_id,
+        'nombre': nombre,
+        'texto': texto,
+        'fecha': comentario_fecha,
+        'actividad_id': actividad_id
+    }

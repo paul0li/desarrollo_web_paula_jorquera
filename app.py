@@ -1,6 +1,7 @@
 from flask import Flask, request, render_template, redirect, url_for, flash, jsonify, abort, send_from_directory
 from werkzeug.utils import secure_filename
 from db.db import (
+    SessionLocal,
     # Modelos
     Region, Comuna,
     # Funciones de consulta
@@ -145,7 +146,7 @@ def agregar_actividad():
         try:
             try:
                 comuna_id_int = int(comuna_id)
-            except (ValueError, TypeError) as e:
+            except (ValueError, TypeError):
                 errores['comuna'] = f"ID de comuna inválido: {comuna_id}"
                 regiones = get_regions()
                 return render_template('form.html', regiones=regiones, errores=errores, form_data=request.form)
@@ -211,7 +212,7 @@ def agregar_actividad():
                 filename = save_file(foto)
                 if filename:
                     try:
-                        foto_obj = create_foto(
+                        create_foto(
                             actividad_id=nueva_actividad.id,
                             ruta_archivo=filename,
                             nombre_archivo=filename
@@ -334,7 +335,7 @@ def line_chart_data():
             'activities': activities
         }
         return jsonify(data)
-    except Exception as e:
+    except Exception:
         # En caso de error, devolver datos de ejemplo
         data = {
             'days': ['2024-01-01', '2024-01-02', '2024-01-03'],
@@ -360,7 +361,7 @@ def pie_chart_data():
             'proportions': proportions
         }
         return jsonify(data)
-    except Exception as e:
+    except Exception:
         # En caso de error, devolver datos de ejemplo
         data = {
             'types': ['música', 'deporte', 'tecnología'],
@@ -396,7 +397,7 @@ def bar_chart_data():
             'afternoon': afternoon
         }
         return jsonify(data)
-    except Exception as e:
+    except Exception:
         # En caso de error, devolver datos de ejemplo
         data = {
             'months': ['2024-01', '2024-02', '2024-03'],
@@ -425,7 +426,7 @@ def get_comentarios(actividad_id):
             'status': 'success',
             'comentarios': comentarios_data
         })
-    except Exception as e:
+    except Exception:
         return jsonify({
             'status': 'error',
             'message': 'Error al obtener comentarios'
@@ -473,7 +474,7 @@ def agregar_comentario():
             'message': 'Comentario agregado exitosamente'
         })
         
-    except Exception as e:
+    except Exception:
         return jsonify({
             'status': 'error',
             'message': 'Error al agregar comentario'
