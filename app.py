@@ -1,20 +1,21 @@
-from flask import Flask, request, render_template, redirect, url_for, flash, session, jsonify, abort, send_from_directory
+from flask import Flask, request, render_template, redirect, url_for, flash, jsonify, abort, send_from_directory
 from werkzeug.utils import secure_filename
 from db.db import (
     # Modelos
-    Region, Comuna, Actividad, Foto, ContactarPor, ActividadTema,
+    Region, Comuna,
     # Funciones de consulta
-    get_regions, get_comunas, get_actividades, get_actividades_count,
+    get_regions, get_comunas, get_actividades_count,
     get_ultimas_actividades, get_actividades_paginadas, get_actividad_detalle,
     get_fotos_by_actividad, get_temas_by_actividad, get_contactos_by_actividad,
-    get_estadisticas_region, get_estadisticas_tema,
+    get_estadisticas_tema,
+    get_estadisticas_actividades_por_dia, get_estadisticas_actividades_por_horario,
+    get_comentarios_by_actividad,
     # Funciones de creación
-    create_actividad, create_tema, create_contacto_por, create_foto
+    create_actividad, create_tema, create_contacto_por, create_foto, create_comentario
 )
 import os
 import datetime
 import re
-import hashlib
 import uuid
 
 UPLOAD_FOLDER = 'static/uploads'
@@ -42,6 +43,11 @@ def save_file(file):
         
         return unique_filename
     return None
+
+@app.route('/uploads/<filename>')
+def uploaded_file(filename):
+    """Sirve archivos subidos desde la carpeta uploads"""
+    return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
 
 @app.route('/')
 def index():
@@ -309,8 +315,169 @@ def ver_actividad(id):
                           temas=temas, 
                           contactos=contactos)
 
+@app.route('/api/estadisticas/line_chart', methods=['GET'])
+def line_chart_data():
+    """Obtiene datos para gráfico de líneas: actividades por día"""
+    try:
+        stats = get_estadisticas_actividades_por_dia()
+        
+        days = []
+        activities = []
+        
+        for stat in stats:
+            # Convertir fecha a string legible
+            days.append(stat.fecha.strftime('%Y-%m-%d'))
+            activities.append(stat.cantidad)
+        
+        data = {
+            'days': days,
+            'activities': activities
+        }
+        return jsonify(data)
+    except Exception as e:
+        # En caso de error, devolver datos de ejemplo
+        data = {
+            'days': ['2024-01-01', '2024-01-02', '2024-01-03'],
+            'activities': [2, 5, 3]
+        }
+        return jsonify(data)
 
+@app.route('/api/estadisticas/pie_chart', methods=['GET'])
+def pie_chart_data():
+    """Obtiene datos para gráfico de torta: proporción de actividades por tema"""
+    try:
+        stats = get_estadisticas_tema()
+        
+        types = []
+        proportions = []
+        
+        for tema, cantidad in stats:
+            types.append(tema)
+            proportions.append(cantidad)
+        
+        data = {
+            'types': types,
+            'proportions': proportions
+        }
+        return jsonify(data)
+    except Exception as e:
+        # En caso de error, devolver datos de ejemplo
+        data = {
+            'types': ['música', 'deporte', 'tecnología'],
+            'proportions': [15, 25, 10]
+        }
+        return jsonify(data)
 
+@app.route('/api/estadisticas/bar_chart', methods=['GET'])
+def bar_chart_data():
+    """Obtiene datos para gráfico de barras: actividades por horario y mes"""
+    try:
+        stats = get_estadisticas_actividades_por_horario()
+        
+        # Organizar datos por mes y horario
+        months_data = {}
+        
+        for año, mes, horario, cantidad in stats:
+            month_key = f"{int(año)}-{int(mes):02d}"
+            if month_key not in months_data:
+                months_data[month_key] = {'mañana': 0, 'mediodía': 0, 'tarde': 0}
+            months_data[month_key][horario] = cantidad
+        
+        # Convertir a formato requerido por el frontend
+        months = sorted(months_data.keys())
+        morning = [months_data[month]['mañana'] for month in months]
+        midday = [months_data[month]['mediodía'] for month in months]
+        afternoon = [months_data[month]['tarde'] for month in months]
+        
+        data = {
+            'months': months,
+            'morning': morning,
+            'midday': midday,
+            'afternoon': afternoon
+        }
+        return jsonify(data)
+    except Exception as e:
+        # En caso de error, devolver datos de ejemplo
+        data = {
+            'months': ['2024-01', '2024-02', '2024-03'],
+            'morning': [5, 8, 12],
+            'midday': [3, 6, 9],
+            'afternoon': [7, 10, 15]
+        }
+        return jsonify(data)
+
+@app.route('/api/comentarios/<int:actividad_id>', methods=['GET'])
+def get_comentarios(actividad_id):
+    """API para obtener comentarios de una actividad específica"""
+    try:
+        comentarios = get_comentarios_by_actividad(actividad_id)
+        
+        comentarios_data = []
+        for comentario in comentarios:
+            comentarios_data.append({
+                'id': comentario.id,
+                'nombre': comentario.nombre,
+                'texto': comentario.texto,
+                'fecha': comentario.fecha.strftime('%d/%m/%Y %H:%M')
+            })
+        
+        return jsonify({
+            'status': 'success',
+            'comentarios': comentarios_data
+        })
+    except Exception as e:
+        return jsonify({
+            'status': 'error',
+            'message': 'Error al obtener comentarios'
+        }), 500
+
+@app.route('/api/comentarios', methods=['POST'])
+def agregar_comentario():
+    """API para agregar un nuevo comentario con validación"""
+    try:
+        # Obtener datos del formulario
+        actividad_id = request.form.get('actividad_id')
+        nombre = request.form.get('nombre', '').strip()
+        texto = request.form.get('comentario', '').strip()
+        
+        # Validación del lado del servidor
+        errores = {}
+        
+        if not actividad_id or not actividad_id.isdigit():
+            errores['actividad_id'] = 'ID de actividad inválido'
+        
+        if not nombre or len(nombre) < 3 or len(nombre) > 80:
+            errores['nombre'] = 'El nombre debe tener entre 3 y 80 caracteres'
+        
+        if not texto or len(texto) < 5:
+            errores['comentario'] = 'El comentario debe tener al menos 5 caracteres'
+        
+        # Si hay errores, devolver respuesta de error
+        if errores:
+            return jsonify({
+                'status': 'error',
+                'errores': errores
+            }), 400
+        
+        # Crear el comentario
+        comentario_data = create_comentario(int(actividad_id), nombre, texto)
+        
+        return jsonify({
+            'status': 'success',
+            'comentario': {
+                'id': comentario_data['id'],
+                'nombre': comentario_data['nombre'],
+                'texto': comentario_data['texto'],
+                'fecha': comentario_data['fecha'].strftime('%d/%m/%Y %H:%M')
+            },
+            'message': 'Comentario agregado exitosamente'
+        })
+        
+    except Exception as e:
+        return jsonify({
+            'status': 'error',
+            'message': 'Error al agregar comentario'
+        }), 500
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)

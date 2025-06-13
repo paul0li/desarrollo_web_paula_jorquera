@@ -43,7 +43,7 @@
             {% if fotos %}
               {% set fotos_urls = [] %}
               {% for foto in fotos %}
-                {% set foto_url = url_for('static', filename='uploads/' + foto.ruta_archivo) %}
+                {% set foto_url = url_for('uploaded_file', filename=foto.ruta_archivo) %}
                 {% set _ = fotos_urls.append(foto_url) %}
               {% endfor %}
               {{ fotos|count }}
