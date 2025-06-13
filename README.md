@@ -114,7 +114,4 @@ Se organizó el CSS en tres archivos principales:
 
 ## Notas Adicionales
 
-- La aplicación está diseñada con una estética minimalista
-- Se ha priorizado la experiencia de usuario con validaciones claras
-- El visor de imágenes proporciona una experiencia fluida para visualizar fotos
-- La estructura modular facilita el mantenimiento y extensión del código
+- Notar que la carpeta uploads esta ignorada. 
