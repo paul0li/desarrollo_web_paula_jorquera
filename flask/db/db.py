@@ -135,12 +135,10 @@ def get_ultimas_actividades(limit=5):
     
     resultado = []
     for act, comuna, region in actividades_base:
-        # Obtener el primer tema de la actividad
         tema = session.query(ActividadTema).filter_by(actividad_id=act.id).first()
         if tema:
             resultado.append((act, comuna, region, tema))
         else:
-            # Crear un tema vacío si no hay temas
             tema_vacio = ActividadTema()
             tema_vacio.tema = "Sin tema"
             tema_vacio.glosa_otro = None
