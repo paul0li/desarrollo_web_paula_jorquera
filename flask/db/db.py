@@ -228,7 +228,7 @@ def get_estadisticas_region():
 def get_estadisticas_tema():
     session = SessionLocal()
     stats = session.query(
-        ActividadTema.tema, session.func.count(ActividadTema.id)
+        ActividadTema.tema, func.count(ActividadTema.id)
     ).group_by(
         ActividadTema.tema
     ).all()

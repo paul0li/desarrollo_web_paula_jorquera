@@ -3,259 +3,20 @@
 {% block title %}Evaluación de Actividades - {{ super() }}{% endblock %}
 
 {% block extra_css %}
-<style>
-    .evaluaciones-container {
-        max-width: 1200px;
-        margin: 20px auto;
-        padding: 20px;
-    }
-    
-    .evaluaciones-title {
-        text-align: center;
-        color: #333;
-        margin-bottom: 30px;
-        font-size: 2em;
-    }
-    
-    .actividades-table {
-        width: 100%;
-        border-collapse: collapse;
-        margin-top: 20px;
-        background-color: white;
-        border-radius: 8px;
-        overflow: hidden;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    }
-    
-    .actividades-table th,
-    .actividades-table td {
-        padding: 12px 15px;
-        text-align: left;
-        border-bottom: 1px solid #e0e0e0;
-    }
-    
-    .actividades-table th {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white;
-        font-weight: bold;
-        text-transform: uppercase;
-        font-size: 0.9em;
-        letter-spacing: 0.5px;
-    }
-    
-    .actividades-table tr:hover {
-        background-color: #f8f9fa;
-    }
-    
-    .btn-evaluar {
-        background: linear-gradient(45deg, #FF6B6B, #FF8E53);
-        color: white;
-        border: none;
-        padding: 8px 16px;
-        border-radius: 20px;
-        cursor: pointer;
-        font-size: 14px;
-        transition: all 0.3s ease;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-    }
-    
-    .btn-evaluar:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 4px 8px rgba(0,0,0,0.3);
-    }
-    
-    .btn-evaluar:disabled {
-        background: #ccc;
-        cursor: not-allowed;
-        transform: none;
-    }
-    
-    .nota-promedio {
-        font-weight: bold;
-        color: #4CAF50;
-        background-color: #E8F5E8;
-        padding: 4px 8px;
-        border-radius: 12px;
-        font-size: 0.9em;
-    }
-    
-    .sin-nota {
-        color: #999;
-        font-style: italic;
-    }
-    
-    .alert {
-        padding: 15px;
-        margin-bottom: 20px;
-        border: 1px solid transparent;
-        border-radius: 8px;
-        font-size: 14px;
-    }
-    
-    .alert-success {
-        color: #155724;
-        background-color: #d4edda;
-        border-color: #c3e6cb;
-    }
-    
-    .alert-error {
-        color: #721c24;
-        background-color: #f8d7da;
-        border-color: #f5c6cb;
-    }
-    
-    .hidden {
-        display: none;
-    }
-    
-    /* Modal styles */
-    .modal {
-        display: none;
-        position: fixed;
-        z-index: 1000;
-        left: 0;
-        top: 0;
-        width: 100%;
-        height: 100%;
-        background-color: rgba(0,0,0,0.5);
-        animation: fadeIn 0.3s ease-out;
-    }
-    
-    @keyframes fadeIn {
-        from { opacity: 0; }
-        to { opacity: 1; }
-    }
-    
-    .modal-content {
-        background-color: #fefefe;
-        margin: 10% auto;
-        padding: 30px;
-        border: none;
-        width: 400px;
-        border-radius: 12px;
-        text-align: center;
-        box-shadow: 0 8px 32px rgba(0,0,0,0.3);
-        animation: slideIn 0.3s ease-out;
-    }
-    
-    @keyframes slideIn {
-        from { transform: translateY(-50px); opacity: 0; }
-        to { transform: translateY(0); opacity: 1; }
-    }
-    
-    .modal-header h3 {
-        color: #333;
-        margin-bottom: 10px;
-    }
-    
-    .modal-header p {
-        color: #666;
-        margin-bottom: 20px;
-        font-size: 0.9em;
-    }
-    
-    .modal-body {
-        margin: 20px 0;
-    }
-    
-    .modal-body label {
-        display: block;
-        margin-bottom: 10px;
-        font-weight: bold;
-        color: #444;
-    }
-    
-    .modal-body select {
-        padding: 10px 15px;
-        border-radius: 8px;
-        border: 2px solid #ddd;
-        font-size: 16px;
-        width: 150px;
-        margin: 10px 0;
-        transition: border-color 0.3s ease;
-    }
-    
-    .modal-body select:focus {
-        border-color: #667eea;
-        outline: none;
-    }
-    
-    .modal-footer {
-        display: flex;
-        justify-content: space-around;
-        margin-top: 25px;
-    }
-    
-    .btn {
-        padding: 12px 24px;
-        border: none;
-        border-radius: 8px;
-        cursor: pointer;
-        font-size: 14px;
-        font-weight: bold;
-        transition: all 0.3s ease;
-        min-width: 100px;
-    }
-    
-    .btn-primary {
-        background: linear-gradient(45deg, #667eea, #764ba2);
-        color: white;
-    }
-    
-    .btn-primary:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
-    }
-    
-    .btn-secondary {
-        background: #f8f9fa;
-        color: #6c757d;
-        border: 2px solid #e9ecef;
-    }
-    
-    .btn-secondary:hover {
-        background: #e9ecef;
-    }
-    
-    .no-actividades {
-        text-align: center;
-        padding: 40px 20px;
-        color: #666;
-    }
-    
-    .no-actividades h3 {
-        color: #999;
-        margin-bottom: 15px;
-    }
-    
-    .loading-spinner {
-        display: inline-block;
-        width: 20px;
-        height: 20px;
-        border: 3px solid #f3f3f3;
-        border-top: 3px solid #3498db;
-        border-radius: 50%;
-        animation: spin 1s linear infinite;
-        margin-right: 10px;
-    }
-    
-    @keyframes spin {
-        0% { transform: rotate(0deg); }
-        100% { transform: rotate(360deg); }
-    }
-</style>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/evaluaciones.css') }}" />
 {% endblock %}
 
 {% block content %}
 <div class="evaluaciones-container">
-    <h2 class="evaluaciones-title">🏆 Evaluación de Actividades Finalizadas</h2>
+    <h2 class="evaluaciones-title">Evaluación de Actividades Finalizadas</h2>
     
     <!-- Mensajes de alerta -->
     <div id="alert-container"></div>
     
     <!-- Tabla de actividades -->
     {% if actividades %}
-    <table class="actividades-table" id="tabla-actividades">
+    <div class="table-container">
+        <table id="tabla-actividades">
         <thead>
             <tr>
                 <th>ID</th>
@@ -289,7 +50,8 @@
             </tr>
             {% endfor %}
         </tbody>
-    </table>
+        </table>
+    </div>
     {% else %}
     <div class="no-actividades">
         <h3>No hay actividades finalizadas para evaluar</h3>
@@ -395,7 +157,6 @@
         container.innerHTML = '';
         container.appendChild(alerta);
         
-        // Auto-ocultar después de 5 segundos
         setTimeout(() => {
             if (alerta.parentElement) {
                 alerta.remove();
@@ -435,7 +196,7 @@
             const data = await response.json();
 
             if (response.ok && data.success) {
-                // [1 punto] - Actualizar promedio en tiempo real sin recargar
+                // Actualizar promedio en tiempo real sin recargar
                 const promedioElement = document.getElementById(`promedio-${actividadActual}`);
                 promedioElement.textContent = data.nuevoPromedio;
                 promedioElement.className = data.nuevoPromedio === '-' ? 'sin-nota' : 'nota-promedio';

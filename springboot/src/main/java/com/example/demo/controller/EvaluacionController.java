@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Map;
 
 @Controller
-@CrossOrigin(origins = "http://localhost:5000")  // Permitir requests desde Flask
+@CrossOrigin(origins = "http://127.0.0.1:5000") // Permitir requests desde Flask
 public class EvaluacionController {
     
     @Autowired
@@ -28,7 +28,6 @@ public class EvaluacionController {
     
     /**
      * Página principal para mostrar actividades finalizadas
-     * [2 puntos] - Interfaz con listado de actividades realizadas
      */
     @GetMapping("/evaluaciones")
     public String mostrarEvaluaciones(Model model) {
@@ -45,7 +44,6 @@ public class EvaluacionController {
     
     /**
      * API REST para agregar una nota a una actividad
-     * [3 puntos] - Agregar nota con validación 1-7 de forma asíncrona
      */
     @PostMapping("/api/actividades/{actividadId}/nota")
     @ResponseBody
@@ -74,7 +72,7 @@ public class EvaluacionController {
             // Agregar la nota
             evaluacionService.agregarNota(actividadId, nota);
             
-            // [1 punto] - Recalcular y devolver el nuevo promedio
+            // Recalcular y devolver el nuevo promedio
             String nuevoPromedio = evaluacionService.getPromedioActividad(actividadId);
             
             response.put("success", true);

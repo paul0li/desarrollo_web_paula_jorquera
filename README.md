@@ -1,144 +1,154 @@
-# Plataforma de Actividades - Desarrollo Web TAREA 3
+# Plataforma de Actividades - Desarrollo Web TAREA 4
 
-Este proyecto es una plataforma web para gestionar y visualizar actividades, desarrollada para el curso de Desarrollo Web en la Universidad de Chile. La aplicación permite registrar actividades, ver su listado, visualizar detalles y está preparada para mostrar estadísticas en futuras implementaciones.
+Este proyecto es una plataforma web para gestionar y visualizar actividades, desarrollada para el curso de Desarrollo Web en la Universidad de Chile. La aplicación permite registrar actividades, ver su listado, visualizar detalles, mostrar estadísticas y **evaluar actividades finalizadas** mediante una arquitectura de microservicios.
 
-## Implementación
+## Arquitectura de Microservicios
 
 ### Tecnologías Utilizadas
-- **Backend**: Python con Flask
-- **Base de Datos**: MySQL con SQLAlchemy como ORM
-- **Frontend**: HTML5, CSS3, JavaScript
+- **Frontend & Backend Principal**: Python con Flask (Puerto 5000)
+- **Microservicio de Evaluaciones**: Java con Spring Boot (Puerto 8080)
+- **Base de Datos**: MySQL compartida entre ambos servicios
+- **ORM**: SQLAlchemy (Flask) y JPA/Hibernate (Spring Boot)
+- **Frontend**: HTML5, CSS3, JavaScript con llamadas asíncronas (fetch API)
 - **Plantillas**: Jinja2
+
+### Descripción de la Arquitectura
+
+```
+┌─────────────────┐    HTTP/REST    ┌──────────────────┐
+│   Flask App     │ ◄──────────────► │   Spring Boot    │
+│   Puerto 5000   │                 │   Puerto 8080    │
+│                 │                 │                  │
+│ • Frontend      │                 │ • API Evaluaciones│
+│ • Gestión Activ.│                 │ • Notas/Promedios │
+│ • Estadísticas  │                 │ • Validaciones    │
+│ • Listados      │                 │                  │
+└─────────┬───────┘                 └────────┬─────────┘
+          │                                  │
+          │                                  │
+          └──────────► MySQL ◄───────────────┘
+                    Puerto 3306
+```
+
+### Funcionalidades por Servicio
+
+#### Flask Service (Puerto 5000)
+- 🏠 **Portada** con últimas actividades
+- ➕ **Formulario** para agregar nuevas actividades
+- 📋 **Listado** de actividades con paginación
+- 👁️ **Vista detallada** de actividades
+- 📊 **Estadísticas** con gráficos dinámicos
+- 🏆 **Interfaz de evaluaciones** (frontend)
+- 💬 **Sistema de comentarios**
+
+#### Spring Boot Service (Puerto 8080)
+- 📝 **API REST** para gestión de evaluaciones
+- ⭐ **Sistema de notas** (escala 1-7)
+- 📈 **Cálculo de promedios** en tiempo real
+- ✅ **Validaciones** de negocio
+- 🔄 **Operaciones asíncronas**
 
 ### Estructura del Proyecto
 
 ```
 .
-├── app.py                  # Aplicación principal Flask
-├── .gitignore              # Archivos y carpetas ignorados por Git
-├── requirements.txt        # Dependencias de Python
-├── db/                     # Módulos de base de datos
-│   ├── db.py               # Modelos y funciones de acceso a datos
-│   ├── init_db.py          # Script de inicialización de la base de datos
-│   ├── tarea2.sql          # Estructura de la base de datos
-│   ├── region-comuna.sql   # Datos de regiones y comunas
-│   └── create_user.sql     # Script para crear usuario de la base de datos
-├── static/                 # Archivos estáticos
-│   ├── css/                # Hojas de estilo
-│   │   ├── base.css        # Estilos base y tipografía
-│   │   ├── components.css  # Componentes reutilizables
-│   │   ├── layout.css      # Estructura y responsividad
-│   │   └── main.css        # Importa los otros archivos CSS
-│   ├── js/                 # JavaScript
-│   │   ├── validation.js   # Validación de formularios
-│   │   └── visor.js        # Visor de imágenes
-│   ├── img/                # Imágenes del sitio
-│   └── uploads/            # Carpeta para archivos subidos (ignorada por Git)
-├── templates/              # Plantillas Jinja2
-│   ├── base.html           # Plantilla base con estructura común
-│   ├── portada.html        # Página de inicio
-│   ├── form.html           # Formulario para agregar actividades
-│   ├── listado.html        # Listado de actividades con paginación
-│   ├── actividad.html      # Detalle de una actividad
-│   └── estadisticas.html   # Página de estadísticas (pendiente)
-├── components/             # Componentes reutilizables del frontend
-├── utils/                  # Utilidades y funciones auxiliares
-└── venv/                   # Entorno virtual (ignorado por Git)
+├── flask/                           # Servicio Flask
+│   ├── app.py                       # Aplicación principal Flask
+│   ├── requirements.txt             # Dependencias Python
+│   ├── db/                          # Módulos de base de datos
+│   │   ├── db.py                    # Modelos SQLAlchemy y funciones
+│   │   ├── init_db.py               # Inicialización de BD
+│   │   ├── tarea2.sql               # Estructura base de datos
+│   │   ├── region-comuna.sql        # Datos de regiones y comunas
+│   │   └── create_user.sql          # Usuario de BD
+│   ├── static/                      # Archivos estáticos
+│   │   ├── css/                     # Hojas de estilo
+│   │   │   ├── base.css             # Estilos base
+│   │   │   ├── components.css       # Componentes reutilizables
+│   │   │   ├── layout.css           # Estructura y responsividad
+│   │   │   ├── evaluaciones.css     # Estilos específicos evaluaciones
+│   │   │   └── main.css             # Importa otros CSS
+│   │   ├── js/                      # JavaScript
+│   │   │   ├── validation.js        # Validación formularios
+│   │   │   └── visor.js             # Visor de imágenes
+│   │   ├── img/                     # Imágenes del sitio
+│   │   └── uploads/                 # Archivos subidos usuarios
+│   ├── templates/                   # Plantillas Jinja2
+│   │   ├── base.html                # Plantilla base
+│   │   ├── portada.html             # Página inicio
+│   │   ├── form.html                # Formulario actividades
+│   │   ├── listado.html             # Listado actividades
+│   │   ├── actividad.html           # Detalle actividad
+│   │   ├── estadisticas.html        # Estadísticas con gráficos
+│   │   └── evaluaciones_flask.html  # Interfaz evaluaciones
+│   ├── components/                  # Componentes reutilizables
+│   ├── utils/                       # Utilidades Flask
+│   └── venv/                        # Entorno virtual Python
+├── springboot/                      # Servicio Spring Boot
+│   ├── src/main/java/com/example/demo/
+│   │   ├── DemoApplication.java     # Aplicación principal Spring
+│   │   ├── controller/              # Controladores REST
+│   │   │   └── EvaluacionController.java
+│   │   ├── service/                 # Lógica de negocio
+│   │   │   └── EvaluacionService.java
+│   │   ├── repository/              # Repositorios JPA
+│   │   │   ├── ActividadRepository.java
+│   │   │   ├── NotaRepository.java
+│   │   │   ├── ComunaRepository.java
+│   │   │   └── ActividadTemaRepository.java
+│   │   └── entity/                  # Entidades JPA
+│   │       ├── Actividad.java
+│   │       ├── Nota.java
+│       ├── Comuna.java
+│   │       └── ActividadTema.java
+│   ├── src/main/resources/
+│   │   └── application.properties   # Configuración Spring Boot
+│   ├── pom.xml                      # Dependencias Maven
+│   └── mvnw, mvnw.cmd              # Maven Wrapper
+├── tabla-nota.sql                   # Script tabla evaluaciones
+└── README.md                        # Este archivo
 ```
 
-### Funcionalidades Implementadas
+## Funcionalidades Implementadas
 
-#### 1. Portada
-- Muestra mensaje de bienvenida
-- Menú de navegación completo
-- Listado de las últimas 5 actividades desde la base de datos
-- Cada actividad muestra su información básica y una imagen si está disponible
+### 1. Portada
+- Muestra mensaje de bienvenida con tema de gatitos 🐱
+- Menú de navegación responsivo
+- Listado de las últimas 5 actividades desde BD
+- Cada actividad muestra información básica e imágenes
 
-#### 2. Formulario de Actividades
-- Validación en tiempo real con JavaScript en el lado del cliente
-- Validación en el servidor con Flask
-- Almacenamiento de múltiples imágenes
-- Soporte para múltiples temas y métodos de contacto
-- Manejo de errores con mensajes descriptivos
-- Redirección a la portada tras agregar exitosamente
+### 2. Gestión de Actividades
+- **Formulario**: Validación cliente/servidor, múltiples imágenes, temas y contactos
+- **Listado**: Paginación, filtros, enlace a vista detallada
+- **Detalle**: Información completa, visor de imágenes modal, sistema de comentarios
 
-#### 3. Listado de Actividades
-- Obtiene actividades desde la base de datos
-- Implementa paginación mostrando 5 actividades por página
-- Controles de navegación entre páginas
-- Enlace a la vista detallada de cada actividad
+### 3. Estadísticas Dinámicas
+- **Gráfico de líneas**: Actividades por día
+- **Gráfico de torta**: Distribución por tipo de actividad (datos reales de BD)
+- **Gráfico de barras**: Actividades por horario y mes
+- Powered by Highcharts con datos desde API
 
-#### 4. Vista Detallada de Actividad
-- Muestra toda la información de la actividad seleccionada
-- Visor de imágenes con diseño modal
-- Muestra temas y métodos de contacto relacionados
-- Información de ubicación (región y comuna)
+### 4. Sistema de Evaluaciones (NUEVO) ⭐
+- **Interfaz en Flask**: Tabla de actividades finalizadas
+- **API en Spring Boot**: Gestión completa de evaluaciones
+- **Evaluación asíncrona**: Modal con escala 1-7, JavaScript fetch
+- **Promedio en tiempo real**: Actualización sin recarga de página
+- **Validaciones**: Cliente y servidor para integridad de datos
 
-#### 5. Sistema de Comentarios (Nuevo)
-- Base de datos preparada para comentarios de actividades
-- Estructura definida en `tabla-comentario.sql`
+### 5. Sistema de Comentarios
+- Comentarios por actividad con validación
+- Interfaz AJAX para experiencia fluida
 
-### Decisiones de Implementación
-
-#### Base de Datos
-- Se utiliza SQLAlchemy como ORM para interactuar con MySQL
-- Modelos definidos para: Región, Comuna, Actividad, Foto, ContactarPor y ActividadTema
-- Relaciones establecidas entre entidades para facilitar consultas
-- Estructura preparada para sistema de comentarios
-
-#### Estructura CSS
-Se organizó el CSS en tres archivos principales:
-- **base.css**: Estilos base, tipografía, colores y reset
-- **components.css**: Componentes reutilizables como botones, navegación y tablas
-- **layout.css**: Estructura, páginas específicas y estilos responsivos
-
-#### Validación
-- **Cliente**: Validación en tiempo real con JavaScript
-- **Servidor**: Validación adicional en Flask antes de guardar en la base de datos
-- Manejo de errores para evitar datos inconsistentes
-
-#### Seguridad
-- Sanitización de entradas para prevenir inyección SQL
-- Nombres de archivo seguros para uploads
-- Validación de tipos de archivo permitidos
-- Límite de tamaño para archivos subidos
-
-#### Control de Versiones
-- Configuración de `.gitignore` para excluir:
-  - Entorno virtual (`venv/`)
-  - Archivos de caché de Python (`__pycache__/`)
-  - Archivos subidos por usuarios (`uploads/`)
-  - Archivos del sistema (`.DS_Store`)
-
-## Configuración
+## Configuración e Instalación
 
 ### Requisitos
 - Python 3.8+
-- MySQL 5.7+
-- Paquetes de Python: Flask, SQLAlchemy, PyMySQL
+- Java 17+
+- Maven 3.6+
+- MySQL 8.0+
 
-### Instrucciones de Instalación
+### 1. Configuración de Base de Datos
 
-#### 1. Preparación del Entorno
-```bash
-# Clonar el repositorio
-git clone <url-del-repositorio>
-cd desarrollo_web_paula_jorquera
-
-# Crear un entorno virtual
-python -m venv venv
-
-# Activar el entorno virtual
-# En Linux/Mac:
-source venv/bin/activate
-# En Windows:
-venv\Scripts\activate
-
-# Instalar dependencias
-pip install -r requirements.txt
-```
-
-#### 2. Configuración de la Base de Datos
 ```sql
 -- Crear la base de datos
 CREATE DATABASE tarea2;
@@ -151,42 +161,158 @@ GRANT ALL PRIVILEGES ON tarea2.* TO 'cc5002'@'localhost';
 FLUSH PRIVILEGES;
 ```
 
-#### 3. Inicialización
 ```bash
-# Inicializar la base de datos
+# Ejecutar scripts de BD
+mysql -u cc5002 -p tarea2 < flask/db/tarea2.sql
+mysql -u cc5002 -p tarea2 < flask/db/region-comuna.sql
+mysql -u cc5002 -p tarea2 < tabla-nota.sql
+```
+
+### 2. Configuración Flask Service
+
+```bash
+cd flask/
+
+# Crear entorno virtual
+python -m venv venv
+
+# Activar entorno virtual
+# Linux/Mac:
+source venv/bin/activate
+# Windows:
+venv\Scripts\activate
+
+# Instalar dependencias
+pip install -r requirements.txt
+
+# Inicializar BD (si es necesario)
 python db/init_db.py
 
-# Ejecutar la aplicación
+# Ejecutar Flask (Puerto 5000)
 python app.py
 ```
 
-#### Estructura de Archivos Ignorados
-El archivo `.gitignore` está configurado para ignorar:
-- `venv/` - Entorno virtual de Python
-- `uploads/` - Archivos subidos por usuarios
-- `__pycache__/` - Archivos de caché de Python
-- `*.DS_Store` - Archivos del sistema macOS
-- `db/__pycache__/` - Caché específico del módulo de base de datos
+### 3. Configuración Spring Boot Service
 
-## Desarrollo
+```bash
+cd springboot/
 
-### Agregar Nuevas Funcionalidades
-1. **Modelos de Base de Datos**: Definir en `db/db.py`
-2. **Rutas y Controladores**: Implementar en `app.py`
-3. **Plantillas**: Crear archivos HTML en `templates/`
-4. **Estilos**: Añadir CSS en `static/css/`
-5. **JavaScript**: Implementar en `static/js/`
+# Compilar y ejecutar (Puerto 8080)
+./mvnw spring-boot:run
+
+# O usando Maven directamente
+mvn spring-boot:run
+```
+
+### 4. Verificación de Servicios
+
+```bash
+# Verificar Flask
+curl http://127.0.0.1:5000/
+
+# Verificar Spring Boot
+curl http://127.0.0.1:8080/api/actividades/1/promedio
+```
+
+## API Endpoints
+
+### Flask Service (Puerto 5000)
+- `GET /` - Portada
+- `GET /form` - Formulario actividades
+- `POST /agregar-actividad` - Agregar actividad
+- `GET /listado` - Listado paginado
+- `GET /actividad/<id>` - Detalle actividad
+- `GET /estadisticas` - Página estadísticas
+- `GET /evaluaciones` - Interfaz evaluaciones
+- `GET /api/estadisticas/*` - APIs para gráficos
+
+### Spring Boot Service (Puerto 8080)
+- `POST /api/actividades/{id}/nota` - Agregar evaluación
+- `GET /api/actividades/{id}/promedio` - Obtener promedio
+- Configurado con CORS para comunicación cross-origin
+
+## Comunicación Entre Servicios
+
+### Patrón de Arquitectura
+1. **Frontend en Flask** presenta la interfaz de evaluaciones
+2. **JavaScript** realiza llamadas asíncronas a Spring Boot
+3. **Spring Boot** procesa evaluaciones y calcula promedios
+4. **Respuesta JSON** actualiza interfaz sin recargar página
+
+### Ejemplo de Comunicación Asíncrona
+
+```javascript
+// Frontend (Flask) llama a Spring Boot
+const response = await fetch(`http://localhost:8080/api/actividades/${id}/nota`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ nota: 7 })
+});
+
+const data = await response.json();
+// Actualiza promedio en tiempo real
+document.getElementById(`promedio-${id}`).textContent = data.nuevoPromedio;
+```
+
+## Características Técnicas
+
+### Seguridad
+- Sanitización de entradas SQL injection
+- Validación dual (cliente/servidor)
+- CORS configurado para comunicación segura
+- Manejo de errores robusto
+
+### Performance
+- Paginación eficiente en listados
+- Llamadas asíncronas para evaluaciones
+- Optimización de consultas SQL
+- CSS y JS organizados y minificados
+
+### Escalabilidad
+- Arquitectura de microservicios
+- Servicios independientes y deployables
+- Base de datos compartida con conexiones optimizadas
+- API RESTful stateless
+
+## Desarrollo y Extensión
+
+### Agregar Nueva Funcionalidad
+1. **Decidir servicio**: ¿Flask (frontend/gestión) o Spring Boot (evaluaciones)?
+2. **Flask**: Modelos en `db/db.py`, rutas en `app.py`, templates en `templates/`
+3. **Spring Boot**: Entidades, repositorios, servicios, controladores
+4. **Frontend**: HTML/CSS/JS con llamadas asíncronas entre servicios
 
 ### Mejores Prácticas
-- Mantener la separación de responsabilidades
-- Validar datos tanto en cliente como servidor
-- Utilizar transacciones de base de datos para operaciones críticas
-- Mantener el código documentado y comentado
-- Seguir las convenciones de nomenclatura de Python (PEP 8)
+- Mantener separación clara de responsabilidades entre servicios
+- Usar transacciones de BD para operaciones críticas
+- Validar datos en ambos extremos de la comunicación
+- Documentar APIs con ejemplos de uso
+- Manejo de errores consistente entre servicios
 
+## Notas de Deployment
 
-## Notas Adicionales
+### Desarrollo
+```bash
+# Terminal 1: Flask
+cd flask && python app.py
 
-- La carpeta `uploads/` está ignorada por Git para evitar subir archivos de usuario al repositorio
-- El entorno virtual `venv/` también está ignorado para mantener el repositorio limpio
-- Los archivos `__pycache__/` se ignoran automáticamente para evitar conflictos entre diferentes versiones de Python
+# Terminal 2: Spring Boot  
+cd springboot && ./mvnw spring-boot:run
+```
+
+### Producción
+- Flask: WSGI server (Gunicorn, uWSGI)
+- Spring Boot: JAR ejecutable o containerización
+- MySQL: Configuración de producción con pools de conexiones
+- Reverse proxy (Nginx) para routing entre servicios
+
+## Control de Versiones
+
+### Archivos Ignorados
+- `flask/venv/` - Entorno virtual Python
+- `flask/uploads/` - Archivos subidos usuarios
+- `*/__pycache__/` - Cache Python  
+- `springboot/target/` - Compilados Maven
+- `*.DS_Store` - Archivos sistema macOS
+
+El proyecto sigue las mejores prácticas de desarrollo con arquitectura de microservicios, proporcionando una plataforma robusta y escalable para la gestión de actividades con capacidades avanzadas de evaluación.
