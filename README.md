@@ -239,20 +239,6 @@ curl http://127.0.0.1:8080/api/actividades/1/promedio
 3. **Spring Boot** procesa evaluaciones y calcula promedios
 4. **Respuesta JSON** actualiza interfaz sin recargar página
 
-### Ejemplo de Comunicación Asíncrona
-
-```javascript
-// Frontend (Flask) llama a Spring Boot
-const response = await fetch(`http://localhost:8080/api/actividades/${id}/nota`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ nota: 7 })
-});
-
-const data = await response.json();
-// Actualiza promedio en tiempo real
-document.getElementById(`promedio-${id}`).textContent = data.nuevoPromedio;
-```
 
 ## Características Técnicas
 
@@ -274,14 +260,6 @@ document.getElementById(`promedio-${id}`).textContent = data.nuevoPromedio;
 - Base de datos compartida con conexiones optimizadas
 - API RESTful stateless
 
-## Desarrollo y Extensión
-
-### Agregar Nueva Funcionalidad
-1. **Decidir servicio**: ¿Flask (frontend/gestión) o Spring Boot (evaluaciones)?
-2. **Flask**: Modelos en `db/db.py`, rutas en `app.py`, templates en `templates/`
-3. **Spring Boot**: Entidades, repositorios, servicios, controladores
-4. **Frontend**: HTML/CSS/JS con llamadas asíncronas entre servicios
-
 ### Mejores Prácticas
 - Mantener separación clara de responsabilidades entre servicios
 - Usar transacciones de BD para operaciones críticas
@@ -300,12 +278,6 @@ cd flask && python app.py
 cd springboot && ./mvnw spring-boot:run
 ```
 
-### Producción
-- Flask: WSGI server (Gunicorn, uWSGI)
-- Spring Boot: JAR ejecutable o containerización
-- MySQL: Configuración de producción con pools de conexiones
-- Reverse proxy (Nginx) para routing entre servicios
-
 ## Control de Versiones
 
 ### Archivos Ignorados
@@ -314,5 +286,3 @@ cd springboot && ./mvnw spring-boot:run
 - `*/__pycache__/` - Cache Python  
 - `springboot/target/` - Compilados Maven
 - `*.DS_Store` - Archivos sistema macOS
-
-El proyecto sigue las mejores prácticas de desarrollo con arquitectura de microservicios, proporcionando una plataforma robusta y escalable para la gestión de actividades con capacidades avanzadas de evaluación.
