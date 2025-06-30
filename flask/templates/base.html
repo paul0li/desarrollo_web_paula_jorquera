@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>{% block title %}Plataforma de Actividades de Gatitos{% endblock %}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}" />
+  {% block extra_css %}{% endblock %}
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Amatic+SC:wght@700&family=Crimson+Text&display=swap" rel="stylesheet" />
+</head>
+<body>
+  <div class="main-container">
+    {% block header %}
+    <h1>Plataforma de Actividades de Gatitos</h1>
+    <p>Comparte y descubre actividades felinas en tu comuna.</p>
+
+    <nav>
+      <ul>
+        <li><a href="{{ url_for('index') }}">Inicio</a></li>
+        <li><a href="{{ url_for('form') }}">Agregar actividad</a></li>
+        <li><a href="{{ url_for('listado') }}">Ver listado de actividades</a></li>
+        <li><a href="{{ url_for('estadisticas') }}">Ver estadísticas</a></li>
+        <li><a href="{{ url_for('evaluaciones') }}">🏆 Evaluar actividades</a></li>
+      </ul>
+    </nav>
+    {% endblock %}
+
+    <!-- Mensajes Flash -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="flash-messages">
+          {% for category, message in messages %}
+            <div class="flash-message {{ category }}">
+              {{ message }}
+              <button class="close-flash" onclick="this.parentElement.style.display='none'">&times;</button>
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    {% block content %}{% endblock %}
+  </div>
+
+  {% block visor %}
+  <!-- Visor de imágenes compartido -->
+  <div id="visor" class="foto-visor">
+    <div class="visor-contenido">
+      <button class="cerrar-visor" onclick="document.getElementById('visor').style.display='none'">
+        <span>&times;</span>
+      </button>
+      <div class="imagen-container">
+        <img id="imgGrande" src="" alt="Foto de la actividad" />
+      </div>
+      <div class="controles">
+        <button id="prevFoto" class="nav-btn" title="Foto anterior">&lt;</button>
+        <span id="fotoIndicador">1 de 3</span>
+        <button id="nextFoto" class="nav-btn" title="Siguiente foto">&gt;</button>
+      </div>
+    </div>
+  </div>
+  {% endblock %}
+
+  <!-- Scripts comunes -->
+  <script src="{{ url_for('static', filename='js/visor.js') }}"></script>
+  {% block scripts %}{% endblock %}
+</body>
+</html>

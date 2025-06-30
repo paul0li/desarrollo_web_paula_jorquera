@@ -1,0 +1,473 @@
+{% extends "base.html" %}
+
+{% block title %}Evaluación de Actividades - {{ super() }}{% endblock %}
+
+{% block extra_css %}
+<style>
+    .evaluaciones-container {
+        max-width: 1200px;
+        margin: 20px auto;
+        padding: 20px;
+    }
+    
+    .evaluaciones-title {
+        text-align: center;
+        color: #333;
+        margin-bottom: 30px;
+        font-size: 2em;
+    }
+    
+    .actividades-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+        background-color: white;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    
+    .actividades-table th,
+    .actividades-table td {
+        padding: 12px 15px;
+        text-align: left;
+        border-bottom: 1px solid #e0e0e0;
+    }
+    
+    .actividades-table th {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        font-weight: bold;
+        text-transform: uppercase;
+        font-size: 0.9em;
+        letter-spacing: 0.5px;
+    }
+    
+    .actividades-table tr:hover {
+        background-color: #f8f9fa;
+    }
+    
+    .btn-evaluar {
+        background: linear-gradient(45deg, #FF6B6B, #FF8E53);
+        color: white;
+        border: none;
+        padding: 8px 16px;
+        border-radius: 20px;
+        cursor: pointer;
+        font-size: 14px;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    }
+    
+    .btn-evaluar:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+    }
+    
+    .btn-evaluar:disabled {
+        background: #ccc;
+        cursor: not-allowed;
+        transform: none;
+    }
+    
+    .nota-promedio {
+        font-weight: bold;
+        color: #4CAF50;
+        background-color: #E8F5E8;
+        padding: 4px 8px;
+        border-radius: 12px;
+        font-size: 0.9em;
+    }
+    
+    .sin-nota {
+        color: #999;
+        font-style: italic;
+    }
+    
+    .alert {
+        padding: 15px;
+        margin-bottom: 20px;
+        border: 1px solid transparent;
+        border-radius: 8px;
+        font-size: 14px;
+    }
+    
+    .alert-success {
+        color: #155724;
+        background-color: #d4edda;
+        border-color: #c3e6cb;
+    }
+    
+    .alert-error {
+        color: #721c24;
+        background-color: #f8d7da;
+        border-color: #f5c6cb;
+    }
+    
+    .hidden {
+        display: none;
+    }
+    
+    /* Modal styles */
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0,0,0,0.5);
+        animation: fadeIn 0.3s ease-out;
+    }
+    
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+    
+    .modal-content {
+        background-color: #fefefe;
+        margin: 10% auto;
+        padding: 30px;
+        border: none;
+        width: 400px;
+        border-radius: 12px;
+        text-align: center;
+        box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+        animation: slideIn 0.3s ease-out;
+    }
+    
+    @keyframes slideIn {
+        from { transform: translateY(-50px); opacity: 0; }
+        to { transform: translateY(0); opacity: 1; }
+    }
+    
+    .modal-header h3 {
+        color: #333;
+        margin-bottom: 10px;
+    }
+    
+    .modal-header p {
+        color: #666;
+        margin-bottom: 20px;
+        font-size: 0.9em;
+    }
+    
+    .modal-body {
+        margin: 20px 0;
+    }
+    
+    .modal-body label {
+        display: block;
+        margin-bottom: 10px;
+        font-weight: bold;
+        color: #444;
+    }
+    
+    .modal-body select {
+        padding: 10px 15px;
+        border-radius: 8px;
+        border: 2px solid #ddd;
+        font-size: 16px;
+        width: 150px;
+        margin: 10px 0;
+        transition: border-color 0.3s ease;
+    }
+    
+    .modal-body select:focus {
+        border-color: #667eea;
+        outline: none;
+    }
+    
+    .modal-footer {
+        display: flex;
+        justify-content: space-around;
+        margin-top: 25px;
+    }
+    
+    .btn {
+        padding: 12px 24px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: bold;
+        transition: all 0.3s ease;
+        min-width: 100px;
+    }
+    
+    .btn-primary {
+        background: linear-gradient(45deg, #667eea, #764ba2);
+        color: white;
+    }
+    
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+    }
+    
+    .btn-secondary {
+        background: #f8f9fa;
+        color: #6c757d;
+        border: 2px solid #e9ecef;
+    }
+    
+    .btn-secondary:hover {
+        background: #e9ecef;
+    }
+    
+    .no-actividades {
+        text-align: center;
+        padding: 40px 20px;
+        color: #666;
+    }
+    
+    .no-actividades h3 {
+        color: #999;
+        margin-bottom: 15px;
+    }
+    
+    .loading-spinner {
+        display: inline-block;
+        width: 20px;
+        height: 20px;
+        border: 3px solid #f3f3f3;
+        border-top: 3px solid #3498db;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        margin-right: 10px;
+    }
+    
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="evaluaciones-container">
+    <h2 class="evaluaciones-title">🏆 Evaluación de Actividades Finalizadas</h2>
+    
+    <!-- Mensajes de alerta -->
+    <div id="alert-container"></div>
+    
+    <!-- Tabla de actividades -->
+    {% if actividades %}
+    <table class="actividades-table" id="tabla-actividades">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Fecha Inicio</th>
+                <th>Sector</th>
+                <th>Nombre</th>
+                <th>Tema</th>
+                <th>Nota Promedio</th>
+                <th>Acción</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for actividad in actividades %}
+            <tr data-id="{{ actividad.id }}">
+                <td>{{ actividad.id }}</td>
+                <td>{{ actividad.fecha_inicio.strftime('%d/%m/%Y %H:%M') }}</td>
+                <td>{{ actividad.sector }}</td>
+                <td>{{ actividad.nombre }}</td>
+                <td>{{ actividad.tema }}</td>
+                <td>
+                    <span class="sin-nota" id="promedio-{{ actividad.id }}">Cargando...</span>
+                </td>
+                <td>
+                    <button class="btn-evaluar" 
+                            onclick="abrirModalEvaluacion(this.dataset.id, this.dataset.nombre)"
+                            data-id="{{ actividad.id }}"
+                            data-nombre="{{ actividad.nombre|replace('"', '&quot;') }}">
+                        Evaluar
+                    </button>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <div class="no-actividades">
+        <h3>No hay actividades finalizadas para evaluar</h3>
+        <p>Las actividades aparecerán aquí cuando hayan terminado.</p>
+    </div>
+    {% endif %}
+</div>
+
+<!-- Modal para evaluación -->
+<div id="modal-evaluacion" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>Evaluar Actividad</h3>
+            <p id="modal-actividad-nombre"></p>
+        </div>
+        <div class="modal-body">
+            <label for="select-nota">Selecciona una nota del 1 al 7:</label>
+            <select id="select-nota">
+                <option value="">-- Selecciona una nota --</option>
+                <option value="1">1 - Muy malo</option>
+                <option value="2">2 - Malo</option>
+                <option value="3">3 - Regular</option>
+                <option value="4">4 - Bueno</option>
+                <option value="5">5 - Muy bueno</option>
+                <option value="6">6 - Excelente</option>
+                <option value="7">7 - Extraordinario</option>
+            </select>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-primary" onclick="enviarEvaluacion()" id="btn-enviar">
+                Evaluar
+            </button>
+            <button class="btn btn-secondary" onclick="cerrarModal()">
+                Cancelar
+            </button>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // URL del microservicio Spring Boot
+    const SPRING_BOOT_URL = 'http://localhost:8080';
+    let actividadActual = null;
+
+    // Cargar promedios al cargar la página
+    document.addEventListener('DOMContentLoaded', function() {
+        cargarTodosLosPromedios();
+    });
+
+    function cargarTodosLosPromedios() {
+        // Obtener todas las filas de actividades
+        const filas = document.querySelectorAll('[data-id]');
+        filas.forEach(fila => {
+            const actividadId = fila.dataset.id;
+            cargarPromedio(parseInt(actividadId));
+        });
+    }
+
+    async function cargarPromedio(actividadId) {
+        try {
+            const response = await fetch(`${SPRING_BOOT_URL}/api/actividades/${actividadId}/promedio`);
+            const data = await response.json();
+            
+            const promedioElement = document.getElementById(`promedio-${actividadId}`);
+            if (data.promedio && data.promedio !== '-') {
+                promedioElement.textContent = data.promedio;
+                promedioElement.className = 'nota-promedio';
+            } else {
+                promedioElement.textContent = '-';
+                promedioElement.className = 'sin-nota';
+            }
+        } catch (error) {
+            console.log(`Sin conexión a Spring Boot para actividad ${actividadId}`);
+            const promedioElement = document.getElementById(`promedio-${actividadId}`);
+            promedioElement.textContent = '-';
+            promedioElement.className = 'sin-nota';
+        }
+    }
+
+    function abrirModalEvaluacion(actividadId, nombre) {
+        actividadActual = parseInt(actividadId);
+        document.getElementById('modal-actividad-nombre').textContent = nombre;
+        document.getElementById('select-nota').value = '';
+        document.getElementById('modal-evaluacion').style.display = 'block';
+    }
+
+    function cerrarModal() {
+        document.getElementById('modal-evaluacion').style.display = 'none';
+        actividadActual = null;
+    }
+
+    function mostrarAlerta(mensaje, tipo) {
+        const container = document.getElementById('alert-container');
+        const alerta = document.createElement('div');
+        alerta.className = `alert alert-${tipo}`;
+        alerta.innerHTML = `
+            ${mensaje}
+            <button onclick="this.parentElement.remove()" style="float: right; background: none; border: none; font-size: 18px; cursor: pointer;">&times;</button>
+        `;
+        
+        container.innerHTML = '';
+        container.appendChild(alerta);
+        
+        // Auto-ocultar después de 5 segundos
+        setTimeout(() => {
+            if (alerta.parentElement) {
+                alerta.remove();
+            }
+        }, 5000);
+    }
+
+    async function enviarEvaluacion() {
+        const nota = document.getElementById('select-nota').value;
+        const btnEnviar = document.getElementById('btn-enviar');
+        
+        if (!nota) {
+            mostrarAlerta('Por favor selecciona una nota', 'error');
+            return;
+        }
+
+        const notaInt = parseInt(nota);
+        if (notaInt < 1 || notaInt > 7) {
+            mostrarAlerta('La nota debe estar entre 1 y 7', 'error');
+            return;
+        }
+
+        // Deshabilitar botón y mostrar loading
+        btnEnviar.disabled = true;
+        btnEnviar.innerHTML = '<span class="loading-spinner"></span>Enviando...';
+
+        try {
+            // Enviar con fetch hacia Spring Boot (asíncrono)
+            const response = await fetch(`${SPRING_BOOT_URL}/api/actividades/${actividadActual}/nota`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ nota: notaInt })
+            });
+
+            const data = await response.json();
+
+            if (response.ok && data.success) {
+                // [1 punto] - Actualizar promedio en tiempo real sin recargar
+                const promedioElement = document.getElementById(`promedio-${actividadActual}`);
+                promedioElement.textContent = data.nuevoPromedio;
+                promedioElement.className = data.nuevoPromedio === '-' ? 'sin-nota' : 'nota-promedio';
+                
+                mostrarAlerta('¡Evaluación agregada exitosamente!', 'success');
+                cerrarModal();
+            } else {
+                mostrarAlerta(data.message || 'Error al agregar la evaluación', 'error');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            mostrarAlerta('Error de conexión con el servidor. Asegúrate de que Spring Boot esté ejecutándose en el puerto 8080.', 'error');
+        } finally {
+            // Rehabilitar botón
+            btnEnviar.disabled = false;
+            btnEnviar.innerHTML = 'Evaluar';
+        }
+    }
+
+    // Cerrar modal al hacer clic fuera de él
+    window.onclick = function(event) {
+        const modal = document.getElementById('modal-evaluacion');
+        if (event.target === modal) {
+            cerrarModal();
+        }
+    }
+
+    // Cerrar modal con Escape
+    document.addEventListener('keydown', function(event) {
+        if (event.key === 'Escape') {
+            cerrarModal();
+        }
+    });
+</script>
+{% endblock %} 
