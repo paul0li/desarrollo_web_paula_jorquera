@@ -1,0 +1,13 @@
+com/example/demo/controller/EvaluacionController.class
+com/example/demo/repository/ActividadTemaRepository.class
+com/example/demo/model/Comuna.class
+com/example/demo/repository/ComunaRepository.class
+com/example/demo/service/EvaluacionService$ActividadEvaluacionDTO.class
+com/example/demo/model/ActividadTema$TemaEnum.class
+com/example/demo/DemoApplication.class
+com/example/demo/repository/ActividadRepository.class
+com/example/demo/model/Actividad.class
+com/example/demo/model/ActividadTema.class
+com/example/demo/model/Nota.class
+com/example/demo/repository/NotaRepository.class
+com/example/demo/service/EvaluacionService.class

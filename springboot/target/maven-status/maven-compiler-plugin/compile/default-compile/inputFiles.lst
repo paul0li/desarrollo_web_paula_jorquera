@@ -1,0 +1,11 @@
+/Users/paul0li/Documents/Apps Web/Tarea4/desarrollo_web_paula_jorquera/springboot/src/main/java/com/example/demo/DemoApplication.java
+/Users/paul0li/Documents/Apps Web/Tarea4/desarrollo_web_paula_jorquera/springboot/src/main/java/com/example/demo/controller/EvaluacionController.java
+/Users/paul0li/Documents/Apps Web/Tarea4/desarrollo_web_paula_jorquera/springboot/src/main/java/com/example/demo/model/Actividad.java
+/Users/paul0li/Documents/Apps Web/Tarea4/desarrollo_web_paula_jorquera/springboot/src/main/java/com/example/demo/model/ActividadTema.java
+/Users/paul0li/Documents/Apps Web/Tarea4/desarrollo_web_paula_jorquera/springboot/src/main/java/com/example/demo/model/Comuna.java
+/Users/paul0li/Documents/Apps Web/Tarea4/desarrollo_web_paula_jorquera/springboot/src/main/java/com/example/demo/model/Nota.java
+/Users/paul0li/Documents/Apps Web/Tarea4/desarrollo_web_paula_jorquera/springboot/src/main/java/com/example/demo/repository/ActividadRepository.java
+/Users/paul0li/Documents/Apps Web/Tarea4/desarrollo_web_paula_jorquera/springboot/src/main/java/com/example/demo/repository/ActividadTemaRepository.java
+/Users/paul0li/Documents/Apps Web/Tarea4/desarrollo_web_paula_jorquera/springboot/src/main/java/com/example/demo/repository/ComunaRepository.java
+/Users/paul0li/Documents/Apps Web/Tarea4/desarrollo_web_paula_jorquera/springboot/src/main/java/com/example/demo/repository/NotaRepository.java
+/Users/paul0li/Documents/Apps Web/Tarea4/desarrollo_web_paula_jorquera/springboot/src/main/java/com/example/demo/service/EvaluacionService.java

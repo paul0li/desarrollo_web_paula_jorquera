@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Evaluación de Actividades</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #f8f9fa;
+            font-weight: bold;
+            color: #333;
+        }
+        tr:hover {
+            background-color: #f5f5f5;
+        }
+        .btn-evaluar {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .btn-evaluar:hover {
+            background-color: #0056b3;
+        }
+        .btn-evaluar:disabled {
+            background-color: #6c757d;
+            cursor: not-allowed;
+        }
+        .nota-promedio {
+            font-weight: bold;
+            color: #28a745;
+        }
+        .sin-nota {
+            color: #6c757d;
+            font-style: italic;
+        }
+        .alert {
+            padding: 15px;
+            margin-bottom: 20px;
+            border: 1px solid transparent;
+            border-radius: 4px;
+        }
+        .alert-success {
+            color: #155724;
+            background-color: #d4edda;
+            border-color: #c3e6cb;
+        }
+        .alert-error {
+            color: #721c24;
+            background-color: #f8d7da;
+            border-color: #f5c6cb;
+        }
+        .hidden {
+            display: none;
+        }
+        .loading {
+            text-align: center;
+            padding: 20px;
+        }
+        /* Modal styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.4);
+        }
+        .modal-content {
+            background-color: #fefefe;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 300px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        .modal-header {
+            margin-bottom: 20px;
+        }
+        .modal-body {
+            margin-bottom: 20px;
+        }
+        .modal-footer {
+            display: flex;
+            justify-content: space-around;
+        }
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .btn-primary {
+            background-color: #007bff;
+            color: white;
+        }
+        .btn-secondary {
+            background-color: #6c757d;
+            color: white;
+        }
+        .btn:hover {
+            opacity: 0.8;
+        }
+        select {
+            padding: 8px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🏆 Evaluación de Actividades Finalizadas</h1>
+        
+        <!-- Mensajes de alerta -->
+        <div id="alert-container"></div>
+        
+        <!-- Tabla de actividades -->
+        <div th:if="${actividades != null and !actividades.empty}">
+            <table id="tabla-actividades">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Fecha Inicio</th>
+                        <th>Sector</th>
+                        <th>Nombre</th>
+                        <th>Tema</th>
+                        <th>Nota</th>
+                        <th>Acción</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="actividad : ${actividades}">
+                        <td th:text="${actividad.id}"></td>
+                        <td th:text="${#temporals.format(#temporals.createDateTime(actividad.fechaInicio), 'dd/MM/yyyy HH:mm')}"></td>
+                        <td th:text="${actividad.sector}"></td>
+                        <td th:text="${actividad.nombre}"></td>
+                        <td th:text="${actividad.tema}"></td>
+                        <td>
+                            <span th:if="${actividad.notaPromedio != '-'}" 
+                                  th:text="${actividad.notaPromedio}" 
+                                  class="nota-promedio"
+                                  th:id="'promedio-' + ${actividad.id}"></span>
+                            <span th:if="${actividad.notaPromedio == '-'}" 
+                                  class="sin-nota"
+                                  th:id="'promedio-' + ${actividad.id}">-</span>
+                        </td>
+                        <td>
+                            <button class="btn-evaluar" 
+                                    th:onclick="'abrirModalEvaluacion(' + ${actividad.id} + ', \'' + ${actividad.nombre} + '\')'">
+                                Evaluar
+                            </button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        
+        <!-- Mensaje si no hay actividades -->
+        <div th:if="${actividades == null or actividades.empty}" class="loading">
+            <h3>No hay actividades finalizadas para evaluar</h3>
+            <p>Las actividades aparecerán aquí cuando hayan terminado.</p>
+        </div>
+    </div>
+
+    <!-- Modal para evaluación -->
+    <div id="modal-evaluacion" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Evaluar Actividad</h3>
+                <p id="modal-actividad-nombre"></p>
+            </div>
+            <div class="modal-body">
+                <label for="select-nota">Selecciona una nota del 1 al 7:</label><br><br>
+                <select id="select-nota">
+                    <option value="">-- Selecciona --</option>
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                    <option value="6">6</option>
+                    <option value="7">7</option>
+                </select>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" onclick="enviarEvaluacion()">Evaluar</button>
+                <button class="btn btn-secondary" onclick="cerrarModal()">Cancelar</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let actividadActual = null;
+
+        function abrirModalEvaluacion(actividadId, nombre) {
+            actividadActual = actividadId;
+            document.getElementById('modal-actividad-nombre').textContent = nombre;
+            document.getElementById('select-nota').value = '';
+            document.getElementById('modal-evaluacion').style.display = 'block';
+        }
+
+        function cerrarModal() {
+            document.getElementById('modal-evaluacion').style.display = 'none';
+            actividadActual = null;
+        }
+
+        function mostrarAlerta(mensaje, tipo) {
+            const container = document.getElementById('alert-container');
+            const alerta = document.createElement('div');
+            alerta.className = `alert alert-${tipo}`;
+            alerta.textContent = mensaje;
+            
+            container.innerHTML = '';
+            container.appendChild(alerta);
+            
+            // Auto-ocultar después de 5 segundos
+            setTimeout(() => {
+                alerta.style.display = 'none';
+            }, 5000);
+        }
+
+        function enviarEvaluacion() {
+            const nota = document.getElementById('select-nota').value;
+            
+            if (!nota) {
+                mostrarAlerta('Por favor selecciona una nota', 'error');
+                return;
+            }
+
+            const notaInt = parseInt(nota);
+            if (notaInt < 1 || notaInt > 7) {
+                mostrarAlerta('La nota debe estar entre 1 y 7', 'error');
+                return;
+            }
+
+            // Deshabilitar botón mientras se procesa
+            const btnEvaluar = document.querySelector(`button[onclick*="${actividadActual}"]`);
+            btnEvaluar.disabled = true;
+            btnEvaluar.textContent = 'Enviando...';
+
+            // Enviar con fetch (asíncrono)
+            fetch(`/api/actividades/${actividadActual}/nota`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ nota: notaInt })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // [1 punto] - Actualizar promedio en tiempo real
+                    const promedioElement = document.getElementById(`promedio-${actividadActual}`);
+                    promedioElement.textContent = data.nuevoPromedio;
+                    promedioElement.className = data.nuevoPromedio === '-' ? 'sin-nota' : 'nota-promedio';
+                    
+                    mostrarAlerta('Evaluación agregada exitosamente', 'success');
+                    cerrarModal();
+                } else {
+                    mostrarAlerta(data.message || 'Error al agregar la evaluación', 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                mostrarAlerta('Error de conexión. Intenta nuevamente.', 'error');
+            })
+            .finally(() => {
+                // Rehabilitar botón
+                btnEvaluar.disabled = false;
+                btnEvaluar.textContent = 'Evaluar';
+            });
+        }
+
+        // Cerrar modal al hacer clic fuera de él
+        window.onclick = function(event) {
+            const modal = document.getElementById('modal-evaluacion');
+            if (event.target === modal) {
+                cerrarModal();
+            }
+        }
+    </script>
+</body>
+</html> 
